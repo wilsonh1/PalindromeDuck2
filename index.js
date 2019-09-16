@@ -52,6 +52,11 @@ app.get('/webhook', (req, res) => {
 function processMessage (event) {
     var message = event.message;
     var senderId = event.sender.id;
+
     console.log("Received message from senderId: " + senderId);
     console.log("Message is: " + JSON.stringify(message));
+
+    if (message.text == "duck me") {
+        console.log("ducked");
+    }
 }
