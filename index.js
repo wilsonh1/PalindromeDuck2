@@ -60,7 +60,7 @@ function processMessage (event) {
         if (message.text == "duck me")
             sendMessage(senderId, {text: "ducked"});
         else {
-            r = Math.floor(Math.random()*2));
+            r = Math.floor(Math.random() * 2);
             if (r == 0)
                 sendMessage(senderId, {text: "duck off"});
             else
