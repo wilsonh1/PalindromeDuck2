@@ -18,6 +18,7 @@
   "homepage": "https://github.com/wilsonh1/PalindromeDuck2#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "request": "^2.88.0"
   }
 }
