@@ -24,7 +24,9 @@ app.post('/webhook', (req, res) => {
     }
 });
 
-app.get('/', function (req, res) { res.send('Hello'); });
+app.get("/", function (req, res) {
+  res.send("Deployed!");
+});
 
 app.get('/webhook', (req, res) => {
     const VERIFY_TOKEN = process.env.VERIFICATION_TOKEN;
