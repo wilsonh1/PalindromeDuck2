@@ -4,7 +4,7 @@ const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
 const
     express = require('express'),
-    //request = require('request'),
+    request = require('request'),
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json());
 
@@ -15,11 +15,11 @@ app.post('/webhook', (req, res) => {
 
     if (body.object === 'page') {
         body.entry.forEach(function(entry) {
-            let webhook_event = entry.messaging[0];
-            console.log(webhook_event);
-            /*entry.messaging.forEach(function(event) {
+            /*let webhook_event = entry.messaging[0];
+            console.log(webhook_event);*/
+            entry.messaging.forEach(function(event) {
                 processMessage(event);
-            });*/
+            });
         });
         res.status(200).send('EVENT_RECEIVED');
     }
@@ -57,14 +57,14 @@ function processMessage (event) {
     console.log("Received message from senderId: " + senderId);
     console.log("Message is: " + JSON.stringify(message));
 
-    /*if (message.text == "duck me")
+    if (message.text == "duck me")
         sendMessage(senderId, {text: "ducked"});
     else {
         sendMessage(senderId, {text: "duck off"});
-    }*/
+    }
 }
 
-/*function sendMessage (recipientId, message) {
+function sendMessage (recipientId, message) {
     request({
         url: "https://graph.facebook.com/v2.6/me/messages",
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -77,4 +77,4 @@ function processMessage (event) {
         if (err)
             console.log("Error sending messages: " + response.error);
     });
-}*/
+}
