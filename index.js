@@ -57,14 +57,14 @@ function processMessage (event) {
     console.log("Received message from senderId: " + senderId);
     console.log("Message is: " + JSON.stringify(message));
 
-    if (message.text == "duck me")
+    /*if (message.text == "duck me")
         sendMessage(senderId, {text: "ducked"});
     else {
         sendMessage(senderId, {text: "duck off"});
-    }
+    }*/
 }
 
-function sendMessage (recipientId, message) {
+/*function sendMessage (recipientId, message) {
     request({
         url: "https://graph.facebook.com/v2.6/me/messages",
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -77,4 +77,4 @@ function sendMessage (recipientId, message) {
         if (err)
             console.log("Error sending messages: " + response.error);
     });
-}
+}*/
