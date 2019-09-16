@@ -18,7 +18,8 @@ app.post('/webhook', (req, res) => {
             /*let webhook_event = entry.messaging[0];
             console.log(webhook_event);*/
             entry.messaging.forEach(function(event) {
-                processMessage(event);
+                if (event.message)
+                    processMessage(event);
             });
         });
         res.status(200).send('EVENT_RECEIVED');
