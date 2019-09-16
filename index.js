@@ -50,16 +50,18 @@ app.get('/webhook', (req, res) => {
 });
 
 function processMessage (event) {
-    var senderId = event.sender.id;
-    var message = event.message;
+    if (!event.message.is_echo) {
+        var senderId = event.sender.id;
+        var message = event.message;
 
-    console.log("Received message from senderId: " + senderId);
-    console.log("Message is: " + JSON.stringify(message));
+        console.log("Received message from senderId: " + senderId);
+        console.log("Message is: " + JSON.stringify(message));
 
-    if (message.text == "duck me")
-        sendMessage(senderId, {text: "ducked"});
-    else {
-        sendMessage(senderId, {text: "duck off"});
+        if (message.text == "duck me")
+            sendMessage(senderId, {text: "ducked"});
+        else {
+            sendMessage(senderId, {text: "duck off"});
+        }
     }
 }
 
