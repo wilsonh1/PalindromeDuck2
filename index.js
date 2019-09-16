@@ -14,8 +14,11 @@ app.post('/webhook', (req, res) => {
 
     if (body.object === 'page') {
         body.entry.forEach(function(entry) {
-            let webhook_event = entry.messaging[0];
-            console.log(webhook_event);
+            /*let webhook_event = entry.messaging[0];
+            console.log(webhook_event);*/
+            entry.messaging.forEach(function(event) {
+                processMessage(event);
+            });
         });
         res.status(200).send('EVENT_RECEIVED');
     }
@@ -45,3 +48,10 @@ app.get('/webhook', (req, res) => {
         }
     }
 });
+
+function processMessage (event) {
+    var message = event.message;
+    var senderId = event.sender.id;
+    console.log("Received message from senderId: " + senderID);
+    console.log("Message is: " + JSON.stringify(message));
+}
