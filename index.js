@@ -15,8 +15,6 @@ app.post('/webhook', (req, res) => {
 
     if (body.object === 'page') {
         body.entry.forEach(function(entry) {
-            /*let webhook_event = entry.messaging[0];
-            console.log(webhook_event);*/
             entry.messaging.forEach(function(event) {
                 if (event.message)
                     processMessage(event);
@@ -62,7 +60,11 @@ function processMessage (event) {
         if (message.text == "duck me")
             sendMessage(senderId, {text: "ducked"});
         else {
-            sendMessage(senderId, {text: "duck off"});
+            r = Math.floor(Math.random()*2));
+            if (r == 0)
+                sendMessage(senderId, {text: "duck off"});
+            else
+                sendMessage(senderId, {text: "go duck yourself"});
         }
     }
 }
