@@ -109,7 +109,9 @@ function getName (senderId) {
             console.log("Error getting name: " + err);
         else {
             var bodyObj = JSON.parse(body);
+            console.log("a");
             name = bodyObj.name;
+            console.log(name);
         }
         return name;
     };
