@@ -1,4 +1,4 @@
-/*'use strict';
+'use strict';
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
@@ -73,7 +73,7 @@ function processMessage (event) {
             date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
 
-            if (checkPalindrome(date)) {
+            /*if (checkPalindrome(date)) {
                 sendMessage(senderId, {text: "duck"});
                 Palindrome.create({timestamp: date}, function (err, docs) {
                     if (err)
@@ -84,7 +84,7 @@ function processMessage (event) {
                 })
             }
             else
-                sendMessage(senderId, {text: "not a palindrome"});
+                sendMessage(senderId, {text: "not a palindrome"});*/
 
 
 
@@ -157,9 +157,9 @@ function sendMessage (recipientId, message) {
         if (err)
             console.log("Error sending messages: " + err);
     });
-}*/
+}
 
-'use strict';
+/*'use strict';
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
@@ -245,4 +245,4 @@ function sendMessage (recipientId, message) {
         if (err)
             console.log("Error sending messages: " + response.error);
     });
-}
+}*/
