@@ -64,6 +64,7 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
+        getName(senderId);
         //var name = getName(senderId);
         //console.log("Message sent by: " + name);
 
