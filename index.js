@@ -1,4 +1,4 @@
-/*'use strict';
+'use strict';
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
@@ -9,7 +9,7 @@ const
     app = express().use(bodyParser.json());
 
 const mongoose = require('mongoose');
-var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
+var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
 var Leaderboard = require('./models/leaderboard');
 var Palindrome = require('./models/palindrome');
 
@@ -153,8 +153,8 @@ function sendMessage (recipientId, message) {
         if (err)
             console.log("Error sending messages: " + err);
     });
-}*/
-'use strict';
+}
+/*'use strict';
 
 const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
@@ -245,4 +245,4 @@ function sendMessage (recipientId, message) {
         if (err)
             console.log("Error sending messages: " + response.error);
     });
-}
+}*/
