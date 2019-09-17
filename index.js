@@ -105,7 +105,7 @@ function getName (senderId) {
         url: "https://graph.facebook.com/v2.6/{senderId}",
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
-            fields: "name"
+            fields: "first_name"
         },
         method: "GET"
     }), function (err, response, body) {
@@ -115,7 +115,7 @@ function getName (senderId) {
         else {
             var bodyObj = JSON.parse(body);
             console.log("a");
-            name = bodyObj.name;
+            name = bodyObj.first_name;
             console.log(name);
         }
         return name;
