@@ -119,6 +119,7 @@ function getName (senderId) {
             sendMessage(senderId, {text: name});
         }
     });
+    sendMessage(senderId, {text: name});
     return name;
 }
 
