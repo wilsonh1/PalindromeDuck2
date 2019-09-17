@@ -64,6 +64,7 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
+        getName(senderId);
         //var name = getName(senderId);
         //console.log("Message sent by: " + name);
 
@@ -100,25 +101,26 @@ function processMessage (event) {
     }
 }
 
-/*function getName (senderId) {
+function getName (senderId) {
     request({
-        url: "https://graph.facebook.com/v2.6/{senderId}",
+        url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
-            fields: "name"
+            fields: "first_name"
         },
         method: "GET"
     }), function (err, response, body) {
-        var name = "";
+        //var name = "";
         if (err)
             console.log("Error getting name: " + err);
         else {
             var bodyObj = JSON.parse(body);
-            name = bodyObj.name;
+            var name = bodyObj.first_name;
+            console.log(name);
         }
-        return name;
+        //return name;
     };
-}*/
+}
 
 function checkPalindrome (cur) {
     var hour = cur.getHours();
