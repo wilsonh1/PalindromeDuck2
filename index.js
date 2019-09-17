@@ -72,8 +72,8 @@ function processMessage (event) {
             date.setSeconds(0, 0);
             date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
-            if (checkPalindrome(date)) {
-                sendMessage(senderId, {text: "duck"});
+            //if (checkPalindrome(date)) {
+        //        sendMessage(senderId, {text: "duck"});
                 /*Palindrome.create({timestamp: date}, function (err, docs) {
                     if (err)
                         sendMessage(senderId, {text: "palindrome already claimed"});
@@ -81,9 +81,9 @@ function processMessage (event) {
                         Leaderboard.create({})
                     }
                 })*/
-            }
-            else
-                sendMessage(senderId, {text: "not a palindrome"});
+            //}
+        //    else
+            //    sendMessage(senderId, {text: "not a palindrome"});
         }
         else {
             var rand = Math.floor(Math.random() * 2);
@@ -117,7 +117,7 @@ function getName (senderId) {
     };
 }
 
-function checkPalindrome (cur) {
+/*function checkPalindrome (cur) {
     var hour = cur.getHours();
 	if (hour > 12)
 		hour -= 12;
@@ -137,7 +137,7 @@ function checkPalindrome (cur) {
 			return false;
 	}
 	return true;
-}
+}*/
 
 function sendMessage (recipientId, message) {
     request({
