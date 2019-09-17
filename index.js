@@ -109,10 +109,10 @@ function getName (senderId) {
             fields: "name"
         },
         method: "GET"
-    }, function (error, response, body) {
+    }, function (err, response, body) {
         var greeting = "";
-        if (error) {
-            console.log("Error getting user's name: " +  error);
+        if (err) {
+            console.log("Error getting user's name: " +  err);
         } else {
             var bodyObj = JSON.parse(body);
             var name = bodyObj.name;
