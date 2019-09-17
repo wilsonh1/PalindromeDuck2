@@ -70,16 +70,17 @@ function processMessage (event) {
             date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
             if (checkPalindrome(date)) {
-                Palindrome.create({timestamp: date}, function (err, docs) {
-                    if (err)
+                Palindrome.create({timestamp: date, user_id: senderId}, function (err1, docs1) {
+                    if (err1)
                         sendMessage(senderId, {text: "palindrome already claimed"});
                     else {
                         sendMessage(senderId, {text: "duck"});
-                        Leaderboard.create({user_id: senderId, name: "", points: 1}, function (err, docs) {
-                            if (err) {
-                                Leaderboard.update({user_id: senderId}, { $inc: { points: 1 } }, function(error, docs) {
-                                    if (err)
-                                        console.log("Error incrementing: " + err);
+                        console.log("Added palindrome: " + date);
+                        Leaderboard.create({user_id: senderId, name: "", points: 1}, function (err2, docs2) {
+                            if (err2) {
+                                Leaderboard.updateOne({user_id: senderId}, { $inc: { points: 1 } }, function(err3, docs) {
+                                    if (err3)
+                                        console.log("Error incrementing: " + err3);
                                     else
                                         console.log("Incremented: " + senderId);
                                 })
@@ -95,6 +96,8 @@ function processMessage (event) {
             else
                 sendMessage(senderId, {text: "not a palindrome"});
         }
+        else if (message.text && message.text == "leaderboard")
+            getRank(senderId);
         else {
             var rand = Math.floor(Math.random() * 2);
             if (rand == 0)
@@ -146,14 +149,35 @@ function setName (senderId) {
                 name: name,
                 points: 1
             };
-            //sendMessage(senderId, {text: name});
-            Leaderboard.findOneAndUpdate(query, update, function(err, mov) {
-                if (err)
-                    console.log("Error setting name: " + err);
+            Leaderboard.findOneAndUpdate(query, update, function(err1, docs1) {
+                if (err1)
+                    console.log("Error setting name: " + err1);
                 else {
                     console.log("Name " + senderId + " set to " + name);
                 }
             })
+        }
+    });
+}
+
+function getRank (senderId) {
+    var q = Leaderboard.find({user_id: senderId}).select({"points": 1, "_id": 0}).lean();
+    q.exec(function (err1, docs1) {
+        if (err1)
+            console.log(err1);
+        else {
+            var qObj = JSON.parse(JSON.stringify(someValue));
+            if (!qObj[0])
+                sendMessage(senderId, {text: "not found on leaderboard"});
+            else {
+                var x = Leaderboard.count({points : {"$gt" : qObj[0]['points']}});
+                x.exec(function(err2, res) {
+                    if (err2)
+                        console.log(err2);
+                    else
+                        sendMessage(senderId, {text: "rank " + (res+1) + " with " + qObj[0]['points'] + " palindromes"});
+                });
+            }
         }
     });
 }
