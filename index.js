@@ -102,6 +102,7 @@ function processMessage (event) {
 }
 
 function getName (senderId) {
+    var name = "";
     request({
         url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
@@ -110,45 +111,14 @@ function getName (senderId) {
         },
         method: "GET"
     }, function (err, response, body) {
-        var name = "";
-        if (err) {
-            console.log("Error getting user's name: " +  err);
-        }
-        else {
-            var bodyObj = JSON.parse(body);
-            name = bodyObj.name;
-        }
-        sendMessage(senderId, {text: name})
-        return name;
-        //sendMessage(senderId, {text: name});
-        /*var name = "";
         if (err)
-            console.log("Error getting name: " + err);
+            console.log("Error getting user's name: " +  err);
         else {
             var bodyObj = JSON.parse(body);
             name = bodyObj.name;
         }
-        return name;*/
     });
-    /*request({
-        url: "https://graph.facebook.com/v2.6/" + senderId,
-        qs: {
-            access_token: process.env.PAGE_ACCESS_TOKEN,
-            fields: "name"
-        },
-        method: "GET"
-    }, function(error, response, body) {
-        var greeting = "";
-        if (error) {
-            console.log("Error getting user's name: " +  error);
-        } else {
-            var bodyObj = JSON.parse(body);
-            var name = bodyObj.name;
-            greeting = "Hi " + name + ".";
-        }
-        var message = greeting;
-        sendMessage(senderId, {text: message});
-    });*/
+    return name;
 }
 
 function checkPalindrome (cur) {
