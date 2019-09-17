@@ -64,8 +64,8 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
-        var name = getName(senderId);
-        console.log("Message sent by: " + name);
+        //var name = getName(senderId);
+        //console.log("Message sent by: " + name);
 
         if (message.text && message.text == "claim") {
             var date = new Date(sent);
@@ -101,7 +101,7 @@ function processMessage (event) {
 }
 
 function getName (senderId) {
-    request({
+    /*request({
         url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
@@ -117,8 +117,8 @@ function getName (senderId) {
             name = bodyObj.name;
         }
         return name;
-    });
-    /*request({
+    });*/
+    request({
         url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
@@ -136,7 +136,7 @@ function getName (senderId) {
         }
         var message = greeting;
         sendMessage(senderId, {text: message});
-    });*/
+    });
 }
 
 function checkPalindrome (cur) {
