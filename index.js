@@ -169,11 +169,6 @@ const
     bodyParser = require('body-parser'),
     app = express().use(bodyParser.json());
 
-const mongoose = require('mongoose');
-var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
-var Leaderboard = require('./models/leaderboard');
-var Palindrome = require('./models/palindrome');
-
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
 app.post('/webhook', (req, res) => {
