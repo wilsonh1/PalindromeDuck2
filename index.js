@@ -64,8 +64,8 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
-        var name = getName(senderId);
-        console.log("Message sent by: " + name);
+        //var name = getName(senderId);
+        //console.log("Message sent by: " + name);
 
         if (message.text && message.text == "claim") {
             var date = new Date(sent);
@@ -73,18 +73,18 @@ function processMessage (event) {
             date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
 
-            /*if (checkPalindrome(date)) {
+            if (checkPalindrome(date)) {
                 sendMessage(senderId, {text: "duck"});
-                Palindrome.create({timestamp: date}, function (err, docs) {
+                /*Palindrome.create({timestamp: date}, function (err, docs) {
                     if (err)
                         sendMessage(senderId, {text: "palindrome already claimed"});
                     else {
                         Leaderboard.create({})
                     }
-                })
+                })*/
             }
             else
-                sendMessage(senderId, {text: "not a palindrome"});*/
+                sendMessage(senderId, {text: "not a palindrome"});
 
 
 
@@ -100,12 +100,12 @@ function processMessage (event) {
     }
 }
 
-function getName (senderId) {
+/*function getName (senderId) {
     request({
         url: "https://graph.facebook.com/v2.6/{senderId}",
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
-            fields: "first_name"
+            fields: "name"
         },
         method: "GET"
     }), function (err, response, body) {
@@ -114,13 +114,11 @@ function getName (senderId) {
             console.log("Error getting name: " + err);
         else {
             var bodyObj = JSON.parse(body);
-            console.log("a");
-            name = bodyObj.first_name;
-            console.log(name);
+            name = bodyObj.name;
         }
         return name;
     };
-}
+}*/
 
 function checkPalindrome (cur) {
     var hour = cur.getHours();
