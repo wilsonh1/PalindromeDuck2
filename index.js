@@ -9,7 +9,7 @@ const
     app = express().use(bodyParser.json());
 
 const mongoose = require('mongoose');
-var db = mongoose.connet(process.env.MONGODB_URI);
+var db = mongoose.connect(process.env.MONGODB_URI);
 var Leaderboard = require("./models/leaderboard");
 var Palindrome = require("./models/palindrome");
 
