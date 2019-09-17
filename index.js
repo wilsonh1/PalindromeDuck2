@@ -118,8 +118,7 @@ function getName (senderId) {
             var name = bodyObj.name;
             greeting = "Hi " + name + ".";
         }
-        var message = greeting;
-        sendMessage(senderId, {text: message});
+        sendMessage(senderId, {text: greeting});
         /*var name = "";
         if (err)
             console.log("Error getting name: " + err);
