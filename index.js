@@ -166,7 +166,7 @@ function getRank (senderId) {
         if (err1)
             console.log(err1);
         else {
-            var qObj = JSON.parse(JSON.stringify(someValue));
+            var qObj = JSON.parse(JSON.stringify(docs1));
             if (!qObj[0])
                 sendMessage(senderId, {text: "not found on leaderboard"});
             else {
