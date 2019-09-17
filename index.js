@@ -102,7 +102,7 @@ function processMessage (event) {
 }
 
 function getName (senderId) {
-    var name = "";
+    var name = "a";
     request({
         url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
@@ -119,6 +119,7 @@ function getName (senderId) {
             sendMessage(senderId, {text: name});
         }
     });
+    console.log("a");
     sendMessage(senderId, {text: name});
     return name;
 }
