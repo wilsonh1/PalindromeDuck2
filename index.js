@@ -118,19 +118,20 @@ function getName (senderId) {
 }
 
 function checkPalindrome (cur) {
-    hour = cur.getHours();
+    var hour = cur.getHours();
 	if (hour > 12)
 		hour -= 12;
     else if (hour == 0)
         hour += 12;
 	hour = hour.toString();
 
-    minutes = cur.getMinutes().toString();
+    var minutes = cur.getMinutes().toString();
 	if (minutes.length == 1)
 		minutes = '0' + minutes;
 
-    s = hour + minutes;
-    len = s.length;
+    var s = hour + minutes;
+    var len = s.length;
+    var i;
 	for (i = 0; i < len/2; i++) {
 		if (s[i] != s[len-i-1])
 			return false;
