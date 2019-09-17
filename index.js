@@ -55,6 +55,7 @@ app.get('/webhook', (req, res) => {
 });
 
 function processMessage (event) {
+    console.log("asdf");
     if (!event.message.is_echo) {
         var senderId = event.sender.id;
         var message = event.message;
@@ -95,7 +96,7 @@ function processMessage (event) {
     }
 }
 
-function checkPalindrome (cur) {
+/*function checkPalindrome (cur) {
     hour = cur.getHours();
 	if (hour > 12)
 		hour -= 12;
@@ -114,9 +115,9 @@ function checkPalindrome (cur) {
 			return false;
 	}
 	return true;
-}
+}*/
 
-function getName (senderId) {
+/*function getName (senderId) {
     request({
         url: "https://graph.facebook.com/v2.6/{senderId}",
         qs: {
@@ -134,7 +135,7 @@ function getName (senderId) {
         }
         return name;
     };
-}
+}*/
 
 function sendMessage (recipientId, message) {
     request({
