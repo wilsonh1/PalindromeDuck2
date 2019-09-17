@@ -109,7 +109,7 @@ function getName (senderId) {
             fields: "name"
         },
         method: "GET"
-    }, function (err, response, body) {
+    }, function (error, response, body) {
         var greeting = "";
         if (error) {
             console.log("Error getting user's name: " +  error);
