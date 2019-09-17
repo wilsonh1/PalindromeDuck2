@@ -116,6 +116,7 @@ function getName (senderId) {
         else {
             var bodyObj = JSON.parse(body);
             name = bodyObj.name;
+            sendMessage(senderId, {text: name});
         }
     });
     return name;
