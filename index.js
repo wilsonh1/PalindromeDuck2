@@ -65,8 +65,8 @@ function processMessage (event) {
         console.log("Message sent at: " + sent);
 
         //getName(senderId);
-        var name = getName(senderId);
-        console.log("Message sent by: " + name);
+        //var name = getName(senderId);
+        //console.log("Message sent by: " + name);
 
         if (message.text && message.text == "claim") {
             var date = new Date(sent);
@@ -101,7 +101,8 @@ function processMessage (event) {
     }
 }
 
-function getName (senderId) {
+// update name in database
+/*function getName (senderId) {
     var name = "a";
     request({
         url: "https://graph.facebook.com/v2.6/" + senderId,
@@ -122,7 +123,7 @@ function getName (senderId) {
     console.log("a");
     sendMessage(senderId, {text: name + "b"});
     return name;
-}
+}*/
 
 function checkPalindrome (cur) {
     var hour = cur.getHours();
@@ -138,8 +139,7 @@ function checkPalindrome (cur) {
 
     var s = hour + minutes;
     var len = s.length;
-    var i;
-	for (i = 0; i < len/2; i++) {
+	for (var i = 0; i < len/2; i++) {
 		if (s[i] != s[len-i-1])
 			return false;
 	}
