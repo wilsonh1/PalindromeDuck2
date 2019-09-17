@@ -120,7 +120,7 @@ function getName (senderId) {
         }
     });
     console.log("a");
-    sendMessage(senderId, {text: name});
+    sendMessage(senderId, {text: name + "b"});
     return name;
 }
 
