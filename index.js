@@ -9,7 +9,7 @@ const
     app = express().use(bodyParser.json());
 
 const mongoose = require('mongoose');
-var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true});
+var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 var Leaderboard = require('./models/leaderboard');
 var Palindrome = require('./models/palindrome');
 
@@ -62,9 +62,9 @@ function processMessage (event) {
 
         console.log("Received message from senderId: " + senderId);
         console.log("Message is: " + JSON.stringify(message));
-        console.log("Message sent: " + sent);
+        console.log("Message sent at: " + sent);
 
-        if (message.text == "duck me")
+        if (message.text && message.text == "claim")
             sendMessage(senderId, {text: "ducked"});
         else {
             var rand = Math.floor(Math.random() * 2);
