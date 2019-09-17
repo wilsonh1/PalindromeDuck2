@@ -102,7 +102,7 @@ function processMessage (event) {
 
 function getName (senderId) {
     request({
-        url: "https://graph.facebook.com/v2.6/" + senderId,
+        url: "https://graph.facebook.com/v2.6/{senderId}",
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
             fields: "name"
