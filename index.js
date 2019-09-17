@@ -110,15 +110,15 @@ function getName (senderId) {
         },
         method: "GET"
     }, function (err, response, body) {
-        var greeting = "";
+        var name = "";
         if (err) {
             console.log("Error getting user's name: " +  err);
-        } else {
-            var bodyObj = JSON.parse(body);
-            var name = bodyObj.name;
-            greeting = "Hi " + name + ".";
         }
-        sendMessage(senderId, {text: greeting});
+        else {
+            var bodyObj = JSON.parse(body);
+            name = bodyObj.name;
+        }
+        sendMessage(senderId, {text: name});
         /*var name = "";
         if (err)
             console.log("Error getting name: " + err);
