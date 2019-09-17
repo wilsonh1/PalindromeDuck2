@@ -123,7 +123,7 @@ function getName (senderId) {
         url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
-            fields: "first_name"
+            fields: "name"
         },
         method: "GET"
     }, function(error, response, body) {
@@ -132,7 +132,7 @@ function getName (senderId) {
             console.log("Error getting user's name: " +  error);
         } else {
             var bodyObj = JSON.parse(body);
-            var name = bodyObj.first_name;
+            var name = bodyObj.name;
             greeting = "Hi " + name + ".";
         }
         var message = greeting;
