@@ -175,7 +175,7 @@ function getRank (senderId) {
                     if (err2)
                         console.log(err2);
                     else
-                        sendMessage(senderId, {text: "rank " + (res+1) + " with " + qObj[0]['points'] + " palindromes"});
+                        sendMessage(senderId, {text: "rank " + (res+1) + " with " + qObj[0]['points'] + " palindrome(s)"});
                 });
             }
         }
