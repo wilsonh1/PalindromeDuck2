@@ -62,10 +62,29 @@ function processMessage (event) {
 
         console.log("Received message from senderId: " + senderId);
         console.log("Message is: " + JSON.stringify(message));
-        console.log("Message sent: " + sent);
+        console.log("Message sent at: " + sent);
 
-        if (message.text == "duck me")
-            sendMessage(senderId, {text: "ducked"});
+        var name = getName(senderId);
+        console.log("Message sent by: " + name);
+
+        if (message.text && message.text == "claim") {
+            var date = new Date(sent);
+            date.setSeconds(0, 0);
+            date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
+
+            //if (checkPalindrome(date)) {
+        //        sendMessage(senderId, {text: "duck"});
+                /*Palindrome.create({timestamp: date}, function (err, docs) {
+                    if (err)
+                        sendMessage(senderId, {text: "palindrome already claimed"});
+                    else {
+                        Leaderboard.create({})
+                    }
+                })*/
+            //}
+        //    else
+            //    sendMessage(senderId, {text: "not a palindrome"});
+        }
         else {
             var rand = Math.floor(Math.random() * 2);
             if (rand == 0)
@@ -75,6 +94,50 @@ function processMessage (event) {
         }
     }
 }
+
+function getName (senderId) {
+    request({
+        url: "https://graph.facebook.com/v2.6/" + senderId,
+        qs: {
+            access_token: process.env.PAGE_ACCESS_TOKEN,
+            fields: "name"
+        },
+        method: "GET"
+    }), function (err, response, body) {
+        var name = "";
+        if (err)
+            console.log("Error getting name: " + err);
+        else {
+            var bodyObj = JSON.parse(body);
+            console.log("a");
+            name = bodyObj.name;
+            console.log(name);
+        }
+        return name;
+    };
+}
+
+/*function checkPalindrome (cur) {
+    var hour = cur.getHours();
+	if (hour > 12)
+		hour -= 12;
+    else if (hour == 0)
+        hour += 12;
+	hour = hour.toString();
+
+    var minutes = cur.getMinutes().toString();
+	if (minutes.length == 1)
+		minutes = '0' + minutes;
+
+    var s = hour + minutes;
+    var len = s.length;
+    var i;
+	for (i = 0; i < len/2; i++) {
+		if (s[i] != s[len-i-1])
+			return false;
+	}
+	return true;
+}*/
 
 function sendMessage (recipientId, message) {
     request({
@@ -87,6 +150,6 @@ function sendMessage (recipientId, message) {
         }
     }, function (err, response, body) {
         if (err)
-            console.log("Error sending messages: " + response.error);
+            console.log("Error sending messages: " + err);
     });
 }
