@@ -64,8 +64,8 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
-        var name = getName(senderId);
-        console.log("Message sent by: " + name);
+        //var name = getName(senderId);
+        //console.log("Message sent by: " + name);
 
         if (message.text && message.text == "claim") {
             date = new Date(sent);
