@@ -77,7 +77,7 @@ function processMessage (event) {
                         sendMessage(senderId, {text: "duck"});
                         Leaderboard.create({user_id: senderId, name: "", points: 1}, function (err, docs) {
                             if (err) {
-                                Leaderboard.update({user_id: senderId}, { $inc: { points: 1 } }), function(error, docs) {
+                                Leaderboard.update({user_id: senderId}, { $inc: { points: 1 } }, function(error, docs) {
                                     if (err)
                                         console.log("Error incrementing: " + err);
                                     else
