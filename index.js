@@ -68,7 +68,7 @@ function processMessage (event) {
         console.log("Message sent by: " + name);
 
         if (message.text && message.text == "claim") {
-            date = new Date(unix);
+            date = new Date(sent);
             date.setSeconds(0, 0);
             date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
@@ -118,7 +118,7 @@ function checkPalindrome (cur) {
 
 function getName (senderId) {
     request({
-        url: "https://graph.facebook.com/v2.6/" + senderId,
+        url: "https://graph.facebook.com/v2.6/{senderId}",
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
             fields: "name"
