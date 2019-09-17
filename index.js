@@ -68,7 +68,7 @@ function processMessage (event) {
         console.log("Message sent by: " + name);
 
         if (message.text && message.text == "claim") {
-            date = new Date(sent);
+            var date = new Date(sent);
             date.setSeconds(0, 0);
             date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
