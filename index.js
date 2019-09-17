@@ -102,7 +102,7 @@ function processMessage (event) {
 }
 
 function getName (senderId) {
-    request({
+    /*request({
         url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
             access_token: process.env.PAGE_ACCESS_TOKEN,
@@ -110,16 +110,35 @@ function getName (senderId) {
         },
         method: "GET"
     }), function (err, response, body) {
-        //var name = "";
+        var name = "";
         if (err)
             console.log("Error getting name: " + err);
         else {
             var bodyObj = JSON.parse(body);
-            var name = bodyObj.first_name;
+            name = bodyObj.first_name;
             console.log(name);
         }
-        //return name;
-    };
+        return name;
+    };*/
+    request({
+        url: "https://graph.facebook.com/v2.6/" + senderId,
+        qs: {
+            access_token: process.env.PAGE_ACCESS_TOKEN,
+            fields: "first_name"
+        },
+        method: "GET"
+    }, function(error, response, body) {
+        var greeting = "";
+        if (error) {
+            console.log("Error getting user's name: " +  error);
+        } else {
+            var bodyObj = JSON.parse(body);
+            name = bodyObj.first_name;
+            greeting = "Hi " + name + ".";
+        }
+        var message = greeting;
+        sendMessage(senderId, {text: message});
+    });
 }
 
 function checkPalindrome (cur) {
