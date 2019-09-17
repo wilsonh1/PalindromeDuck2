@@ -64,9 +64,9 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
-        getName(senderId);
-        //var name = getName(senderId);
-        //console.log("Message sent by: " + name);
+        //getName(senderId);
+        var name = getName(senderId);
+        console.log("Message sent by: " + name);
 
         if (message.text && message.text == "claim") {
             var date = new Date(sent);
@@ -118,7 +118,9 @@ function getName (senderId) {
             var bodyObj = JSON.parse(body);
             name = bodyObj.name;
         }
-        sendMessage(senderId, {text: name});
+        sendMessage(senderId, {text: name})
+        return name;
+        //sendMessage(senderId, {text: name});
         /*var name = "";
         if (err)
             console.log("Error getting name: " + err);
