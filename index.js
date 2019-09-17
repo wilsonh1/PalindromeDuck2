@@ -96,7 +96,6 @@ function processMessage (event) {
 }
 
 function getName (senderId) {
-    console.log("name");
     request({
         url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
@@ -105,7 +104,7 @@ function getName (senderId) {
         },
         method: "GET"
     }), function (err, response, body) {
-        name = "";
+        var name = "";
         if (err)
             console.log("Error getting name: " + err);
         else {
