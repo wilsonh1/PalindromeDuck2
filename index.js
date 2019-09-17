@@ -67,20 +67,20 @@ function processMessage (event) {
         //var name = getName(senderId);
         //console.log("Message sent by: " + name);
 
-        if (message.text && message.text == "claim") {
+        /*if (message.text && message.text == "claim") {
             date = new Date(sent);
             date.setSeconds(0, 0);
             date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
             if (checkPalindrome(date)) {
                 sendMessage(senderId, {text: "duck"});
-                /*Palindrome.create({timestamp: date}, function (err, docs) {
+                Palindrome.create({timestamp: date}, function (err, docs) {
                     if (err)
                         sendMessage(senderId, {text: "palindrome already claimed"});
                     else {
                         Leaderboard.create({})
                     }
-                })*/
+                })
             }
             else
                 sendMessage(senderId, {text: "not a palindrome"});
@@ -91,7 +91,7 @@ function processMessage (event) {
                 sendMessage(senderId, {text: "duck off"});
             else
                 sendMessage(senderId, {text: "go duck yourself"});
-        }
+        }*/
     }
 }
 
