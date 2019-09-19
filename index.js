@@ -97,8 +97,8 @@ function processMessage (event) {
                                     user_id: senderId
                                 };
                                 Palindrome.findOneAndUpdate(query, update, function(errU, docsU) {
-                                    if (err1)
-                                        console.log("Error updating palindrome: " + err1);
+                                    if (errU)
+                                        console.log("Error updating palindrome: " + errU);
                                     else
                                         console.log("Updated palindrome: " + sent);
                                 });
