@@ -94,7 +94,7 @@ function processMessage (event) {
                                 var update = {
                                     timestamp: date,
                                     unix: sent,
-                                    user_id: senderId;
+                                    user_id: senderId
                                 };
                                 Palindrome.findOneAndUpdate(query, update, function(errU, docsU) {
                                     if (err1)
