@@ -77,7 +77,7 @@ function processMessage (event) {
                     else {
                         var palObj = JSON.parse(JSON.stringify(docs));
                         if (!palObj[0]) {
-                            Palindrome.create({timestamp: date, user_id: senderId}, function(errC, docsC) {
+                            Palindrome.create({timestamp: date, unix: sent, user_id: senderId}, function(errC, docsC) {
                                 if (errC)
                                     console.log(errC);
                                 else
