@@ -69,32 +69,58 @@ function processMessage (event) {
             date.setSeconds(0, 0);
             date = new Date(date.toLocaleString("en-US", {timeZone: "America/Los_Angeles"}));
 
-            if (checkPalindrome(date)) {
-                Palindrome.create({timestamp: date, user_id: senderId}, function (err1, docs1) {
-                    if (err1)
-                        sendMessage(senderId, {text: "palindrome already claimed"});
+            if (checkTime(date)) {
+                var palQ = Palindrome.find({timestamp: date}).select({"unix": 1, "user_id": 1, "_id":0}).lean();
+                palQ.exec(function(err, docs) {
+                    if (err)
+                        console.log(err);
                     else {
-                        sendMessage(senderId, {text: "duck"});
-                        console.log("Added palindrome: " + date);
-                        Leaderboard.create({user_id: senderId, name: "", points: 1}, function (err2, docs2) {
-                            if (err2) {
-                                Leaderboard.updateOne({user_id: senderId}, { $inc: { points: 1 } }, function(err3, docs) {
-                                    if (err3)
-                                        console.log("Error incrementing: " + err3);
+                        var palObj = JSON.parse(JSON.stringify(docs));
+                        if (!palObj[0]) {
+                            Palindrome.create({timestamp: date, user_id: senderId}, function(errC, docsC) {
+                                if (errC)
+                                    console.log(errC);
+                                else
+                                    updateLeader(senderId, 1);
+                            });
+                            console.log("Added palindrome: " + date + " " + sent);
+                        }
+                        else {
+                            if (sent < palObj[0]['unix'] && senderId != palObj[0]['user_id']) {
+                                updateLeader(palObj[0]['user_id'], -1);
+                                updateLeader(senderId, 1);
+
+                                var query = {timestamp: date};
+                                var update = {
+                                    timestamp: date,
+                                    unix: sent,
+                                    user_id: senderId;
+                                };
+                                Palindrome.findOneAndUpdate(query, update, function(errU, docsU) {
+                                    if (err1)
+                                        console.log("Error updating palindrome: " + err1);
                                     else
-                                        console.log("Incremented: " + senderId);
-                                })
+                                        console.log("Updated palindrome: " + sent);
+                                });
                             }
-                            else {
-                                console.log("Created leaderboard: " + senderId);
-                                setName(senderId);
-                            }
-                        })
+                            else
+                                sendMessage(senderId, {text: "palindrome already claimed"});
+                        }
                     }
-                })
+                });
             }
-            else
+            else {
                 sendMessage(senderId, {text: "not a palindrome"});
+
+                if (sent % 1000 > 250 && sent % 1000 < 750) {
+                    Palindrome.deleteMany({}, function(err, response) {
+                        if (err)
+                            console.log("Error resetting palindromes " + err);
+                        else
+                            console.log("Reset palindromes");
+                    });
+                }
+            }
         }
         else if (message.text && message.text == "leaderboard")
             getRank(senderId);
@@ -108,25 +134,58 @@ function processMessage (event) {
     }
 }
 
-function checkPalindrome (cur) {
-    var hour = cur.getHours();
-	if (hour > 12)
-		hour -= 12;
-    else if (hour == 0)
-        hour += 12;
-	hour = hour.toString();
+function checkTime (cur) {
+    return true;
+    /*var h24 = cur.getHours().toString();
 
     var minutes = cur.getMinutes().toString();
 	if (minutes.length == 1)
 		minutes = '0' + minutes;
 
-    var s = hour + minutes;
+    if (checkPalindrome(h24 + minutes))
+        return true;
+
+    var hour = cur.getHours();
+	if (hour > 12)
+		hour -= 12;
+    else if (hour == 0)
+        hour = 12;
+	hour = hour.toString();
+
+    if (checkPalindrome(hour + minutes))
+        return true;
+    return false;*/
+}
+
+function checkPalindrome (s) {
     var len = s.length;
 	for (var i = 0; i < len/2; i++) {
 		if (s[i] != s[len-i-1])
 			return false;
 	}
 	return true;
+}
+
+function updateLeader (senderId, val) {
+    if (val == 1)
+        sendMessage(senderId, {text: "duck"});
+    else
+        sendMessage(senderId, {text: "sniped"});
+
+    Leaderboard.create({user_id: senderId, name: "", points: 0}, function(err, docs) {
+        if (err) {
+            Leaderboard.updateOne({user_id: senderId}, { $inc: { points: val } }, function(errU, docsU) {
+                if (errU)
+                    console.log("Error incrementing: " + errU);
+                else
+                    console.log("Incremented: " + senderId + " " + val);
+            });
+        }
+        else {
+            console.log("Created leaderboard: " + senderId);
+            setName(senderId);
+        }
+    });
 }
 
 function setName (senderId) {
@@ -152,17 +211,16 @@ function setName (senderId) {
             Leaderboard.findOneAndUpdate(query, update, function(err1, docs1) {
                 if (err1)
                     console.log("Error setting name: " + err1);
-                else {
+                else
                     console.log("Name " + senderId + " set to " + name);
-                }
-            })
+            });
         }
     });
 }
 
 function getRank (senderId) {
     var q = Leaderboard.find({user_id: senderId}).select({"points": 1, "_id": 0}).lean();
-    q.exec(function (err1, docs1) {
+    q.exec(function(err1, docs1) {
         if (err1)
             console.log(err1);
         else {
