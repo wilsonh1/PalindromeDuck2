@@ -183,12 +183,12 @@ function updateLeader (senderId, val) {
         }
         else {
             console.log("Created leaderboard: " + senderId);
-            setName(senderId);
+            setName(senderId, val);
         }
     });
 }
 
-function setName (senderId) {
+function setName (senderId, val) {
     request({
         url: "https://graph.facebook.com/v2.6/" + senderId,
         qs: {
@@ -206,7 +206,7 @@ function setName (senderId) {
             var update = {
                 user_id: senderId,
                 name: name,
-                points: 1
+                points: val
             };
             Leaderboard.findOneAndUpdate(query, update, function(err1, docs1) {
                 if (err1)
