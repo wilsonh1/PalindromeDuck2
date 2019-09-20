@@ -76,36 +76,33 @@ function processMessage (event) {
                         console.log(err);
                     else {
                         var palObj = JSON.parse(JSON.stringify(docs));
-                        if (!palObj[0]) {
-                            Palindrome.create({timestamp: date, unix: sent, user_id: senderId}, function(errC, docsC) {
-                                if (errC)
-                                    console.log(errC);
-                                else
+                        Palindrome.create({timestamp: date, unix: sent, user_id: senderId}, function(errC, docsC) {
+                            if (errC) {
+                                if (sent < palObj[0]['unix'] && senderId != palObj[0]['user_id']) {
+                                    updateLeader(palObj[0]['user_id'], -1);
                                     updateLeader(senderId, 1);
-                            });
-                            console.log("Added palindrome: " + date + " " + sent);
-                        }
-                        else {
-                            if (sent < palObj[0]['unix'] && senderId != palObj[0]['user_id']) {
-                                updateLeader(palObj[0]['user_id'], -1);
-                                updateLeader(senderId, 1);
 
-                                var query = {timestamp: date};
-                                var update = {
-                                    timestamp: date,
-                                    unix: sent,
-                                    user_id: senderId
-                                };
-                                Palindrome.findOneAndUpdate(query, update, function(errU, docsU) {
-                                    if (errU)
-                                        console.log("Error updating palindrome: " + errU);
-                                    else
-                                        console.log("Updated palindrome: " + sent);
-                                });
+                                    var query = {timestamp: date};
+                                    var update = {
+                                        timestamp: date,
+                                        unix: sent,
+                                        user_id: senderId
+                                    };
+                                    Palindrome.findOneAndUpdate(query, update, function(errU, docsU) {
+                                        if (errU)
+                                            console.log("Error updating palindrome: " + errU);
+                                        else
+                                            console.log("Updated palindrome: " + sent);
+                                    });
+                                }
+                                else
+                                    sendMessage(senderId, {text: "palindrome already claimed"});
                             }
-                            else
-                                sendMessage(senderId, {text: "palindrome already claimed"});
-                        }
+                            else {
+                                updateLeader(senderId, 1);
+                                console.log("Added palindrome: " + date + " " + sent);
+                            }
+                        });
                     }
                 });
             }
@@ -135,6 +132,14 @@ function processMessage (event) {
 }
 
 function checkTime (cur) {
+    var h24 = cur.getHours().toString();
+
+    var minutes = cur.getMinutes().toString();
+    if (minutes.length == 1)
+        minutes = '0' + minutes;
+
+    if (checkPalindrome(h24 + minutes))
+        return true;
     return true;
     /*var h24 = cur.getHours().toString();
 
