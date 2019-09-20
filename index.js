@@ -150,7 +150,7 @@ function checkTime (cur) {
 
     if (checkPalindrome(hour + minutes))
         return true;
-    return true;
+    return false;
 }
 
 function checkPalindrome (s) {
