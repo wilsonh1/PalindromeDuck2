@@ -67,7 +67,7 @@ function processMessage (event) {
         if (message.text && message.text == "claim") {
             var date = new Date(sent);
             date.setSeconds(0, 0);
-            date = new Date(date.toLocaleString("en-US", {timeZone: process.env.TZ})); //"America/Los_Angeles"}));
+            date = new Date(date.toLocaleString("en-US", {timeZone: process.env.TZ}));
 
             if (checkTime(date)) {
                 Palindrome.create({timestamp: date, unix: sent, user_id: senderId}, function(errC, docsC) {
