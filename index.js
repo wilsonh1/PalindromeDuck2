@@ -105,47 +105,11 @@ function processMessage (event) {
                         console.log("Added palindrome: " + date + " " + sent);
                     }
                 });
-/*
-                var palQ = Palindrome.find({timestamp: date}).select({"unix": 1, "user_id": 1, "_id":0}).lean();
-                palQ.exec(function(err, docs) {
-                    if (err)
-                        console.log(err);
-                    else {
-                        var palObj = JSON.parse(JSON.stringify(docs));
-                        Palindrome.create({timestamp: date, unix: sent, user_id: senderId}, function(errC, docsC) {
-                            if (errC) {
-                                if (sent < palObj[0]['unix'] && senderId != palObj[0]['user_id']) {
-                                    updateLeader(palObj[0]['user_id'], -1);
-                                    updateLeader(senderId, 1);
-
-                                    var query = {timestamp: date};
-                                    var update = {
-                                        timestamp: date,
-                                        unix: sent,
-                                        user_id: senderId
-                                    };
-                                    Palindrome.findOneAndUpdate(query, update, function(errU, docsU) {
-                                        if (errU)
-                                            console.log("Error updating palindrome: " + errU);
-                                        else
-                                            console.log("Updated palindrome: " + sent);
-                                    });
-                                }
-                                else
-                                    sendMessage(senderId, {text: "palindrome already claimed"});
-                            }
-                            else {
-                                updateLeader(senderId, 1);
-                                console.log("Added palindrome: " + date + " " + sent);
-                            }
-                        });
-                    }
-                });*/
             }
             else {
                 sendMessage(senderId, {text: "not a palindrome"});
 
-                if (sent % 1000 > 250 && sent % 1000 < 750) {
+                if (sent % 10000 > 500 && sent % 10000 < 9500) {
                     Palindrome.deleteMany({}, function(err, response) {
                         if (err)
                             console.log("Error resetting palindromes " + err);
@@ -171,15 +135,6 @@ function checkTime (cur) {
     var h24 = cur.getHours().toString();
 
     var minutes = cur.getMinutes().toString();
-    if (minutes.length == 1)
-        minutes = '0' + minutes;
-
-    if (checkPalindrome(h24 + minutes))
-        return true;
-    return true;
-    /*var h24 = cur.getHours().toString();
-
-    var minutes = cur.getMinutes().toString();
 	if (minutes.length == 1)
 		minutes = '0' + minutes;
 
@@ -195,7 +150,7 @@ function checkTime (cur) {
 
     if (checkPalindrome(hour + minutes))
         return true;
-    return false;*/
+    return false;
 }
 
 function checkPalindrome (s) {
