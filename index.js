@@ -112,7 +112,7 @@ function processMessage (event) {
                 });
             }
             else {
-                sendMessage(senderId, {text: "*not a palindrome*"});
+                sendMessage(senderId, {text: "not a palindrome"});
 
                 if (sent % 10000 > 500 && sent % 10000 < 9500) {
                     Palindrome.deleteMany({}, function(err, response) {
