@@ -186,7 +186,7 @@ function updateLeader (senderId, val) {
     else if (val == 3)
         sendMessage(senderId, {text: "triple DUCK !!"});
     else if (val == 4)
-        sendMessage(senderId, {text: "*quadruple DUCK !!!*"});
+        sendMessage(senderId, {text: "*quadruple DUCK !!!!*"});
 
     Leaderboard.create({user_id: senderId, name: "", points: 0}, function(err, docs) {
         if (err) {
