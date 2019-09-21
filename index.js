@@ -78,8 +78,10 @@ function processMessage (event) {
                                 console.log(err);
                             else {
                                 var palObj = JSON.parse(JSON.stringify(docs));
-                                if (sent < palObj[0]['unix'] && senderId != palObj[0]['user_id']) {
+                                var diff = sent - palObj[0]['unix'];
+                                if (diff < 0 && senderId != palObj[0]['user_id']) {
                                     updateLeader(palObj[0]['user_id'], -1);
+                                    sendMessage(palOb[0]['user_id'], {text: "sniped " + (-diff / 1000) + "s"})
                                     updateLeader(senderId, 1);
 
                                     var query = {timestamp: date};
@@ -96,7 +98,7 @@ function processMessage (event) {
                                     });
                                 }
                                 else
-                                    sendMessage(senderId, {text: "palindrome already claimed"});
+                                    sendMessage(senderId, {text: "palindrome already claimed " + (diff / 1000) + "s"});
                             }
                         });
                     }
@@ -165,8 +167,6 @@ function checkPalindrome (s) {
 function updateLeader (senderId, val) {
     if (val == 1)
         sendMessage(senderId, {text: "duck"});
-    else
-        sendMessage(senderId, {text: "sniped"});
 
     Leaderboard.create({user_id: senderId, name: "", points: 0}, function(err, docs) {
         if (err) {
