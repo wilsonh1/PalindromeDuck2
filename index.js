@@ -70,9 +70,11 @@ function processMessage (event) {
             date = new Date(date.toLocaleString("en-US", {timeZone: process.env.TZ}));
 
             if (checkTime(date)) {
-                Palindrome.create({timestamp: date, unix: sent, user_id: senderId}, function(errC, docsC) {
+                var val = getPoints();
+
+                Palindrome.create({timestamp: date, unix: sent, user_id: senderId, points: val}, function(errC, docsC) {
                     if (errC) {
-                        var palQ = Palindrome.find({timestamp: date}).select({"unix": 1, "user_id": 1, "_id":0}).lean();
+                        var palQ = Palindrome.find({timestamp: date}).select({"unix": 1, "user_id": 1, "points": 1, "_id":0}).lean();
                         palQ.exec(function(err, docs) {
                             if (err)
                                 console.log(err);
@@ -80,9 +82,9 @@ function processMessage (event) {
                                 var palObj = JSON.parse(JSON.stringify(docs));
                                 var diff = sent - palObj[0]['unix'];
                                 if (diff < 0 && senderId != palObj[0]['user_id']) {
-                                    updateLeader(palObj[0]['user_id'], -1);
+                                    updateLeader(palObj[0]['user_id'], -palObj[0]['points']);
                                     sendMessage(palOb[0]['user_id'], {text: "sniped " + (-diff / 1000) + "s"})
-                                    updateLeader(senderId, 1);
+                                    updateLeader(senderId, val);
 
                                     var query = {timestamp: date};
                                     var update = {
@@ -103,13 +105,13 @@ function processMessage (event) {
                         });
                     }
                     else {
-                        updateLeader(senderId, 1);
+                        updateLeader(senderId, val);
                         console.log("Added palindrome: " + date + " " + sent);
                     }
                 });
             }
             else {
-                sendMessage(senderId, {text: "not a palindrome"});
+                sendMessage(senderId, {text: "*not a palindrome*"});
 
                 if (sent % 10000 > 500 && sent % 10000 < 9500) {
                     Palindrome.deleteMany({}, function(err, response) {
@@ -164,9 +166,26 @@ function checkPalindrome (s) {
 	return true;
 }
 
+function getPoints () {
+    var rand = Math.floor(Math.random() * 125);
+    if (rand < 1)
+        return 4;
+    if (rand < 6)
+        return 3;
+    if (rand < 31)
+        return 2;
+    return 1;
+}
+
 function updateLeader (senderId, val) {
     if (val == 1)
         sendMessage(senderId, {text: "duck"});
+    else if (val == 2)
+        sendMessage(senderId, {text: "double duck !"});
+    else if (val == 3)
+        sendMessage(senderId, {text: "triple DUCK !!"});
+    else if (val == 4)
+        sendMessage(senderId, {text: "*quadruple DUCK !!!*"});
 
     Leaderboard.create({user_id: senderId, name: "", points: 0}, function(err, docs) {
         if (err) {
