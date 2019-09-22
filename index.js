@@ -169,7 +169,6 @@ function checkPalindrome (s) {
 
 function getPoints () {
     var rand = Math.floor(Math.random() * 125);
-    console.log(rand);
     if (rand < 1)
         return 4;
     if (rand < 6)
