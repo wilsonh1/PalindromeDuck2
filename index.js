@@ -83,7 +83,7 @@ function processMessage (event) {
                                 var diff = sent - palObj[0]['unix'];
                                 if (diff < 0 && senderId != palObj[0]['user_id']) {
                                     updateLeader(palObj[0]['user_id'], -palObj[0]['points']);
-                                    sendMessage(palOb[0]['user_id'], {text: "sniped " + (-diff / 1000) + "s"})
+                                    sendMessage(palObj[0]['user_id'], {text: "sniped " + (-diff / 1000) + "s"})
                                     updateLeader(senderId, val);
 
                                     var query = {timestamp: date};
