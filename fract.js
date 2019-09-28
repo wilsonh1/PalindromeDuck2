@@ -172,11 +172,11 @@ function checkTime (cur) {
 }
 
 function checkPalindrome (s) {
-    var len = s.length;
+    /*var len = s.length;
 	for (var i = 0; i < len/2; i++) {
 		if (s[i] != s[len-i-1])
 			return false;
-	}
+	}*/
 	return true;
 }
 
