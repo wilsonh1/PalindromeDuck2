@@ -125,7 +125,7 @@ function processMessage (event) {
                 }
             }
         }
-        else if (message.text && message.text == "points") {
+        else if (message.text && message.text == "score") {
             var q = Leaderboard.find({user_id: senderId}).select({"points": 1, "_id": 0}).lean();
             q.exec(function(err1, docs1) {
                 if (err1)
