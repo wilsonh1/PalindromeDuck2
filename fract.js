@@ -216,7 +216,7 @@ function setName (senderId) {
         else {
             var bodyObj = JSON.parse(body);
             var name = bodyObj.name;
-            Leaderboard.updateOne({user_id: senderId}, {name: name}, fuction(errU, docsU) {
+            Leaderboard.updateOne({user_id: senderId}, {name: name}, function(errU, docsU) {
                 if (err1)
                     console.log("Error setting name: " + err1);
                 else
