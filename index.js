@@ -100,18 +100,18 @@ function checkTime (cur) {
     var h24 = cur.getHours().toString();
 
     var minutes = cur.getMinutes().toString();
-	if (minutes.length == 1)
-		minutes = '0' + minutes;
+    if (minutes.length == 1)
+        minutes = '0' + minutes;
 
     if (checkPalindrome(h24 + minutes))
         return true;
 
     var hour = cur.getHours();
-	if (hour > 12)
-		hour -= 12;
+    if (hour > 12)
+        hour -= 12;
     else if (hour == 0)
         hour = 12;
-	hour = hour.toString();
+    hour = hour.toString();
 
     if (checkPalindrome(hour + minutes))
         return true;
@@ -120,11 +120,11 @@ function checkTime (cur) {
 
 function checkPalindrome (s) {
     var len = s.length;
-	for (var i = 0; i < len/2; i++) {
-		if (s[i] != s[len-i-1])
-			return false;
-	}
-	return true;
+    for (var i = 0; i < len/2; i++) {
+        if (s[i] != s[len-i-1])
+            return false;
+    }
+    return true;
 }
 
 function updatePal (senderId, sent, date) {
