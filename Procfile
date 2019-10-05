@@ -1,1 +1,1 @@
-web: node fract.js
+web: node index.js
