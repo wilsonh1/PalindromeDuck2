@@ -19,13 +19,13 @@ app.post('/webhook', (req, res) => {
     let body = req.body;
 
     if (body.object === 'page') {
+        res.status(200).send('EVENT_RECEIVED');
         body.entry.forEach(function(entry) {
             entry.messaging.forEach(function(event) {
                 if (event.message)
                     processMessage(event);
             });
         });
-        res.status(200).send('EVENT_RECEIVED');
     }
     else {
         res.sendStatus(404);
