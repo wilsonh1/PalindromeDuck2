@@ -25,7 +25,7 @@ app.post('/webhook', (req, res) => {
                     processMessage(event);
             });
         });
-        res.status(200).send('EVENT_RECEIVED');
+        //res.status(200).send('EVENT_RECEIVED');
     }
     else {
         res.sendStatus(404);
