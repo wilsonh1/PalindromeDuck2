@@ -64,7 +64,7 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
-        if (message.text && message.text == "claim") {
+        if (message.text && message.text.toLowerCase() == "claim") {
             var date = new Date(sent);
             date.setSeconds(0, 0);
             date = new Date(date.toLocaleString("en-US", {timeZone: process.env.TZ}));
@@ -84,7 +84,7 @@ function processMessage (event) {
                 }
             }
         }
-        else if (message.text && message.text == "leaderboard")
+        else if (message.text && message.text.toLowerCase() == "leaderboard")
             getRank(senderId);
         else {
             var rand = Math.floor(Math.random() * 2);

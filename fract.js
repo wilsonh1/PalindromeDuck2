@@ -64,7 +64,7 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
-        if (message.text && message.text == "claim") {
+        if (message.text && message.text.toLowerCase() == "claim") {
             var date = new Date(sent);
             date.setSeconds(0, 0);
             date = new Date(date.toLocaleString("en-US", {timeZone: process.env.TZ}));
@@ -84,7 +84,7 @@ function processMessage (event) {
                 }
             }
         }
-        else if (message.text && message.text == "score") {
+        else if (message.text && message.text.toLowerCase() == "score") {
             var q = Leaderboard.find({user_id: senderId}).select({"points": 1, "_id": 0}).lean();
             q.exec(function(err1, docs1) {
                 if (err1)
