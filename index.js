@@ -127,7 +127,7 @@ function checkPalindrome (s) {
     return true;
 }
 
-function updatePal (senderId, sent, date, mId) {
+function updatePal (senderId, sent, date, messageId) {
     var rand = Math.floor(Math.random() * 125);
     var val = 1;
     if (rand < 31)
@@ -137,7 +137,7 @@ function updatePal (senderId, sent, date, mId) {
     if (rand < 1)
         val++;
 
-    Palindrome.create({timestamp: date, unix: sent, user_id: senderId, mid: mId, points: val}, function(errC, docsC) {
+    Palindrome.create({timestamp: date, unix: sent, user_id: senderId, mid: messageId, points: val}, function(errC, docsC) {
         if (errC) {
             var palQ = Palindrome.find({timestamp: date}).select({unix: 1, user_id: 1, mid: 1, points: 1, _id: 0}).lean();
             palQ.exec(function(err, docs) {
@@ -155,7 +155,7 @@ function updatePal (senderId, sent, date, mId) {
                         var update = {
                             unix: sent,
                             user_id: senderId,
-                            mid: mId,
+                            mid: messageId,
                             points: val
                         };
                         Palindrome.updateOne(query, update, function(errU, docsU) {
@@ -165,7 +165,7 @@ function updatePal (senderId, sent, date, mId) {
                                 console.log("Updated palindrome: " + sent);
                         });
                     }
-                    else if (mId != palObj[0]['mid'])
+                    else if (messageId != palObj[0]['mid'])
                         sendMessage(senderId, {text: "palindrome already claimed " + (diff / 1000) + "s"});
                 }
             });
