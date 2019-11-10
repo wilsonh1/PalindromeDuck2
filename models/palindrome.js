@@ -5,6 +5,7 @@ var PalindromeSchema = new Schema({
     timestamp: {type: Date, unique: true},
     unix: Number,
     user_id: String,
+    mid: String,
     points: Number
 });
 
