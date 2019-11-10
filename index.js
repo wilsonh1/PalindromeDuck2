@@ -165,7 +165,7 @@ function updatePal (senderId, sent, date, mId) {
                                 console.log("Updated palindrome: " + sent);
                         });
                     }
-                    else if (mid != palObj[0]['mid'])
+                    else if (mId != palObj[0]['mid'])
                         sendMessage(senderId, {text: "palindrome already claimed " + (diff / 1000) + "s"});
                 }
             });
