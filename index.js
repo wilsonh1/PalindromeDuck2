@@ -270,7 +270,7 @@ function getDiff (senderId, points, flag) {
         user_id: {$ne: senderId},
         points: (flag == "behind") ? {$gt: points} : {$lt: points}
     };
-    var lQ = Leaderboard.findOne(query).select({points: 1, _id: 0}).lean();
+    var lQ = Leaderboard.find(query).sort({points: (flag == "behind") ? 1 : -1}).select({points: 1, _id: 0}).lean();
     lQ.exec(function(err, lObj) {
         if (err)
             console.log(err);
