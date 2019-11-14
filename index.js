@@ -156,7 +156,6 @@ function updatePal (senderId, sent, date, messageId) {
                 if (err)
                     console.log(err);
                 else {
-                    //var palObj = JSON.parse(JSON.stringify(docs));
                     var diff = sent - palObj['unix'];
                     if (diff < 0 && senderId != palObj['user_id']) {
                         updateLeader(palObj['user_id'], -palObj['points']);
@@ -245,7 +244,6 @@ function getLeader (senderId, flag) {
         if (err)
             console.log(err);
         else {
-            //var lObj = JSON.parse(JSON.stringify(docs1));
             if (!lObj)
                 sendMessage(senderId, {text: "not found on leaderboard"});
             else {
@@ -275,6 +273,7 @@ function getDiff (senderId, points, flag) {
         if (err)
             console.log(err);
         else {
+            console.log(lObj);
             var p = (lObj) ? lObj[0]['points'] : points;
             var x = Leaderboard.count({points : {"$gt" : p}});
             x.exec(function(err2, res) {
