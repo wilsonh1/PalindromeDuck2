@@ -64,36 +64,48 @@ function processMessage (event) {
         console.log("Message is: " + JSON.stringify(message));
         console.log("Message sent at: " + sent);
 
-        if (message.text && message.text.toLowerCase() == "claim") {
-            var date = new Date(sent);
-            date.setSeconds(0, 0);
-            date = new Date(date.toLocaleString("en-US", {timeZone: process.env.TZ}));
+        if (!message.text)
+            notRecognized(senderId);
+        else {
+            var str = message.text.toLowerCase();
+            if (str == "claim") {
+                var date = new Date(sent);
+                date.setSeconds(0, 0);
+                date = new Date(date.toLocaleString("en-US", {timeZone: process.env.TZ}));
 
-            if (checkTime(date))
-                updatePal(senderId, sent, date, message.mid);
-            else {
-                sendMessage(senderId, {text: "not a palindrome"});
+                if (checkTime(date))
+                    updatePal(senderId, sent, date, message.mid);
+                else {
+                    sendMessage(senderId, {text: "not a palindrome"});
 
-                if (sent % 60000 > 1000 && sent % 60000 < 59000) {
-                    Palindrome.deleteMany({}, function(err, response) {
-                        if (err)
-                            console.log("Error resetting palindromes " + err);
-                        else
-                            console.log("Reset palindromes");
-                    });
+                    if (sent % 60000 > 1000 && sent % 60000 < 59000) {
+                        Palindrome.deleteMany({}, function(err, response) {
+                            if (err)
+                                console.log("Error resetting palindromes " + err);
+                            else
+                                console.log("Reset palindromes");
+                        });
+                    }
                 }
             }
-        }
-        else if (message.text && message.text.toLowerCase() == "leaderboard")
-            getRank(senderId);
-        else {
-            var rand = Math.floor(Math.random() * 2);
-            if (rand == 0)
-                sendMessage(senderId, {text: "duck off"});
+            else if (str == "leaderboard")
+                getLeader(senderId, "");
+            else if (str == "ahead")
+                getLeader(senderId, "ahead of");
+            else if (str == "behind")
+                getLeader(senderId, "behind");
             else
-                sendMessage(senderId, {text: "go duck yourself"});
+                notRecognized(senderId);
         }
     }
+}
+
+function notRecognized (senderId) {
+    var rand = Math.floor(Math.random() * 2);
+    if (rand == 0)
+        sendMessage(senderId, {text: "duck off"});
+    else
+        sendMessage(senderId, {text: "go duck yourself"});
 }
 
 function checkTime (cur) {
@@ -139,16 +151,16 @@ function updatePal (senderId, sent, date, messageId) {
 
     Palindrome.create({timestamp: date, unix: sent, user_id: senderId, mid: messageId, points: val}, function(errC, docsC) {
         if (errC) {
-            var palQ = Palindrome.find({timestamp: date}).select({unix: 1, user_id: 1, mid: 1, points: 1, _id: 0}).lean();
-            palQ.exec(function(err, docs) {
+            var palQ = Palindrome.findOne({timestamp: date}).select({unix: 1, user_id: 1, mid: 1, points: 1, _id: 0}).lean();
+            palQ.exec(function(err, palObj) {
                 if (err)
                     console.log(err);
                 else {
-                    var palObj = JSON.parse(JSON.stringify(docs));
-                    var diff = sent - palObj[0]['unix'];
-                    if (diff < 0 && senderId != palObj[0]['user_id']) {
-                        updateLeader(palObj[0]['user_id'], -palObj[0]['points']);
-                        sendMessage(palObj[0]['user_id'], {text: "sniped " + (-diff / 1000) + "s"})
+                    //var palObj = JSON.parse(JSON.stringify(docs));
+                    var diff = sent - palObj['unix'];
+                    if (diff < 0 && senderId != palObj['user_id']) {
+                        updateLeader(palObj['user_id'], -palObj['points']);
+                        sendMessage(palObj['user_id'], {text: "sniped " + (-diff / 1000) + "s"})
                         updateLeader(senderId, val);
 
                         var query = {timestamp: date};
@@ -165,7 +177,7 @@ function updatePal (senderId, sent, date, messageId) {
                                 console.log("Updated palindrome: " + sent);
                         });
                     }
-                    else if (messageId != palObj[0]['mid'])
+                    else if (messageId != palObj['mid'])
                         sendMessage(senderId, {text: "palindrome already claimed " + (diff / 1000) + "s"});
                 }
             });
@@ -227,24 +239,50 @@ function setName (senderId) {
     });
 }
 
-function getRank (senderId) {
-    var lQ = Leaderboard.find({user_id: senderId}).select({points: 1, _id: 0}).lean();
-    lQ.exec(function(err1, docs1) {
-        if (err1)
-            console.log(err1);
+function getLeader (senderId, flag) {
+    var lQ = Leaderboard.findOne({user_id: senderId}).select({points: 1, _id: 0}).lean();
+    lQ.exec(function(err, lObj) {
+        if (err)
+            console.log(err);
         else {
-            var lObj = JSON.parse(JSON.stringify(docs1));
-            if (!lObj[0])
+            //var lObj = JSON.parse(JSON.stringify(docs1));
+            if (!lObj)
                 sendMessage(senderId, {text: "not found on leaderboard"});
             else {
-                var x = Leaderboard.count({points : {"$gt" : lObj[0]['points']}});
-                x.exec(function(err2, res) {
-                    if (err2)
-                        console.log(err2);
-                    else
-                        sendMessage(senderId, {text: "rank " + (res+1) + " with " + lObj[0]['points'] + " palindrome(s)"});
-                });
+                if (!flag) {
+                    var x = Leaderboard.count({points : {"$gt" : lObj['points']}});
+                    x.exec(function(err2, res) {
+                        if (err2)
+                            console.log(err2);
+                        else
+                            sendMessage(senderId, {text: "rank " + (res + 1) + " with " + lObj['points'] + " palindrome(s)"});
+                    });
+                }
+                else
+                    getDiff(senderId, lObj['points'], flag);
             }
+        }
+    });
+}
+
+function getDiff (senderId, points, flag) {
+    var query = {
+        user_id: {$ne: senderId},
+        points: (flag == "behind") ? {$gt: points} : {$lt: points}
+    };
+    var lQ = Leaderboard.findOne(query).select({points: 1, _id: 0}).lean();
+    lQ.exec(function(err, lObj) {
+        if (err)
+            console.log(err);
+        else {
+            var p = (lObj) ? lObj['points'] : points;
+            var x = Leaderboard.count({points : {"$gt" : p}});
+            x.exec(function(err2, res) {
+                if (err2)
+                    console.log(err2);
+                else
+                    sendMessage(senderId, {text: Math.abs(points - p) +  " palindrome(s) " + flag + " rank " + (res + 1)});
+            });
         }
     });
 }
