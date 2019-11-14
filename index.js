@@ -275,7 +275,7 @@ function getDiff (senderId, points, flag) {
         if (err)
             console.log(err);
         else {
-            var p = (lObj) ? lObj['points'] : points;
+            var p = (lObj) ? lObj[0]['points'] : points;
             var x = Leaderboard.count({points : {"$gt" : p}});
             x.exec(function(err2, res) {
                 if (err2)
