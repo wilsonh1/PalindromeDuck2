@@ -15,7 +15,7 @@ function getProblem (userId) {
         if (err)
             console.log(err);
         else {
-            var rand = Math.floor(Math.random() * cnt);
+            var rand = Math.floor(Math.random() * res);
 
             User.updateOne({user_id: userId}, {user_id: userId, p_id: rand}, {upsert: true}, function(errC, docsC) {
                 if (errC)
