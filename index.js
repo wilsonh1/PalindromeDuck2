@@ -97,7 +97,7 @@ function processMessage (event) {
             else if (str == "behind")
                 getLeader(senderId, "behind");
             else if (str == "ftw")
-                ftw.getProblem();
+                ftw.getProblem(senderId);
             else
                 notRecognized(senderId);
         }

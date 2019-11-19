@@ -20,17 +20,18 @@ function getProblem (userId) {
             User.updateOne({user_id: userId}, {user_id: userId, p_id: rand}, {upsert: true}, function(errC, docsC) {
                 if (errC)
                     console.log(errC);
-                else
+                else {
                     console.log("Updated ftw user: " + userId);
+                    var pQ = Problem.findOne({p_id: rand}).select({statement: 1, _id: 0}).lean();
+                    pQ.exec(function(errP, pObj) {
+                        if (errP)
+                            console.log(errP);
+                        else
+                            sendMessage(userId, pObj['statement'], true);
+                    });
+                }
             });
-
-            var pQ = Problem.findOne({p_id: rand}).select({statement: 1, _id: 0}).lean();
-            pQ.exec(function(errP, pObj) {
-                if (errP)
-                    console.log(errP);
-                else
-                    sendMessage(userId, pObj['statement'], true);
-            });
+            
         }
     });
 }
