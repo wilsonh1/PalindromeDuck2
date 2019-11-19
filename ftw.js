@@ -1,7 +1,5 @@
 'use strict';
 
-const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
-
 const request = require('request');
 
 const mongoose = require('mongoose');
@@ -37,6 +35,7 @@ function getProblem (userId) {
 }
 
 function sendMessage (recipientId, message, flag) {
+    console.log(message);
     request({
         url: "https://graph.facebook.com/v4.0/me/messages",
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -48,7 +47,7 @@ function sendMessage (recipientId, message, flag) {
     }, function (err, response, body) {
         if (err)
             console.log("Error sending messages: " + err);
-        if (flag) {
+        else if (flag) {
             User.updateOne({user_id: recipientId}, {unix: new Date().getTime()}, function(errT, docsT) {
                 if (errT)
                     console.log(errT);
