@@ -46,7 +46,7 @@ function getAnswer (senderId, answer, sent) {
             console.log(err);
         else {
             //console.log(uObj['p_id']);
-            if (!uObj || uObj == -1) {
+            if (!uObj || uObj['p_id'] == -1) {
                 sendMessage(senderId, {text: "Ask for new problem."}, false);
                 return;
             }
