@@ -25,7 +25,7 @@ function getProblem (userId) {
                         if (errP)
                             console.log(errP);
                         else
-                            sendMessage(userId, pObj['statement'], true);
+                            sendMessage(userId, {text: pObj['statement']}, true);
                     });
                 }
             });
@@ -35,7 +35,6 @@ function getProblem (userId) {
 }
 
 function sendMessage (recipientId, message, flag) {
-    console.log(message);
     request({
         url: "https://graph.facebook.com/v4.0/me/messages",
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
@@ -45,7 +44,6 @@ function sendMessage (recipientId, message, flag) {
             message: message,
         }
     }, function (err, response, body) {
-        console.log(body);
         if (err)
             console.log("Error sending messages: " + err);
         else if (flag) {
