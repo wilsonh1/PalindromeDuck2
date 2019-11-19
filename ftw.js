@@ -90,7 +90,7 @@ function getStats (senderId) {
             else {
                 sendMessage(senderId, {text: "Number of questions answered " + uObj['count']}, false);
                 var p = (uObj['correct']/uObj['count'])*100;
-                sendMessage(senderId, {text: "Accuracy %f\%", p.toFixed(2)});
+                sendMessage(senderId, {text: "Accuracy %f\%", p.toFixed(2)}, false);
             }
         }
     });
