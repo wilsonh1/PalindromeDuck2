@@ -31,7 +31,7 @@ function getProblem (userId) {
                     });
                 }
             });
-            
+
         }
     });
 }
@@ -49,11 +49,11 @@ function sendMessage (recipientId, message, flag) {
         if (err)
             console.log("Error sending messages: " + err);
         if (flag) {
-            User.updateOne({user_id: userId}, {unix: new Date().getTime()}, function(errT, docsT) {
+            User.updateOne({user_id: recipientId}, {unix: new Date().getTime()}, function(errT, docsT) {
                 if (errT)
                     console.log(errT);
                 else
-                    console.log("Set time: " + userId);
+                    console.log("Set time: " + recipientId);
             });
         }
     });
