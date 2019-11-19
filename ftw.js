@@ -45,6 +45,7 @@ function sendMessage (recipientId, message, flag) {
             message: message,
         }
     }, function (err, response, body) {
+        console.log(body);
         if (err)
             console.log("Error sending messages: " + err);
         else if (flag) {
