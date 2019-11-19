@@ -49,9 +49,14 @@ function getAnswer (senderId, answer, sent) {
                 else {
                     var diff = (sent - uObj['unix'])/1000;
                     //console.log(pObj['answer']);
+                    if (diff < 0) {
+                        sendMessage(senderId, {text: "Wait for problem statement."}, false);
+                        return;
+                    }
+
                     var upd = (pObj['answer'] == answer);
                     if (upd) {
-                        sendMessage(senderId, {text: "Correct ! " + diff + "s"}, false);
+                        sendMessage(senderId, {text: "Correct! " + diff + "s"}, false);
                         if (diff <= pObj['best'])
                             sendMessage(senderId, {text: "New best time !"}, false);
                         else
