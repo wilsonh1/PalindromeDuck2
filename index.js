@@ -13,6 +13,8 @@ var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUn
 var Leaderboard = require('./models/leaderboard');
 var Palindrome = require('./models/palindrome');
 
+const ftw = require('./ftw');
+
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
 app.post('/webhook', (req, res) => {
@@ -94,6 +96,8 @@ function processMessage (event) {
                 getLeader(senderId, "ahead of");
             else if (str == "behind")
                 getLeader(senderId, "behind");
+            else if (str == "ftw")
+                ftw.getProblem();
             else
                 notRecognized(senderId);
         }
