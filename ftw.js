@@ -34,6 +34,28 @@ function getProblem (userId) {
     });
 }
 
+function checkAnswer (userId, answer, sent) {
+    var uQ = User.findOne({user_id: userId}).select({p_id: 1, unix: 1, _id: 0}).lean();
+    uQ.exec(function(err, uObj) {
+        if (err)
+            console.log(err);
+        else {
+            var pQ = Problem.findOne({p_id: uObj['p_id']}).select({answer: 1, _id: 0}).lean();
+            pQ.exec(function(err2, pObj) {
+                if (err2)
+                    console.log(err2);
+                else {
+                    var diff = (sent - uObj['unix'])/1000;
+                    if (pObj['answer'] == answer)
+                        sendMessage("Correct ! " + diff + "s");
+                    else
+                        sendMessage("Incorrect " + diff + "s");
+                }
+            });
+        }
+    });
+}
+
 function sendMessage (recipientId, message, flag) {
     request({
         url: "https://graph.facebook.com/v4.0/me/messages",
@@ -47,7 +69,8 @@ function sendMessage (recipientId, message, flag) {
         if (err)
             console.log("Error sending messages: " + err);
         else if (flag) {
-            User.updateOne({user_id: recipientId}, {unix: new Date().getTime()}, function(errT, docsT) {
+            var date = new Date().getTime();
+            User.updateOne({user_id: recipientId}, {unix: date}, function(errT, docsT) {
                 if (errT)
                     console.log(errT);
                 else
