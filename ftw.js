@@ -13,6 +13,10 @@ function getProblem (senderId) {
         if (err)
             console.log(err);
         else {
+            if (!res) {
+                sendMessage(senderId, {text: "No problems found."}, false);
+                return;
+            }
             var rand = Math.floor(Math.random() * res);
 
             User.updateOne({user_id: senderId}, {user_id: senderId, p_id: rand}, {upsert: true}, function(errC, docsC) {
@@ -42,6 +46,10 @@ function getAnswer (senderId, answer, sent) {
             console.log(err);
         else {
             //console.log(uObj['p_id']);
+            if (!uObj || uObj == -1) {
+                sendMessage(senderId, {text: "Ask for new problem."}, false);
+                return;
+            }
             var pQ = Problem.findOne({p_id: uObj['p_id']}).select({answer: 1, best: 1, _id: 0}).lean();
             pQ.exec(function(err2, pObj) {
                 if (err2)
@@ -65,7 +73,7 @@ function getAnswer (senderId, answer, sent) {
                     else
                         sendMessage(senderId, {text: "Incorrect " + diff + "s"}, false);
 
-                    User.updateOne({user_id: senderId}, {$inc: {count: 1, correct: upd}}, function(errU, docsU) {
+                    User.updateOne({user_id: senderId}, {p_id: -1, $inc: {count: 1, correct: upd}}, function(errU, docsU) {
                         if (errU)
                             console.log("Error updating user");
                         else
