@@ -97,7 +97,11 @@ function processMessage (event) {
             else if (str == "ftw")
                 ftw.getProblem(senderId);
             else if (str.split(' ')[0] == "check")
-                ftw.checkAnswer(senderId, str.split(' ')[1], sent);
+                ftw.getAnswer(senderId, str.split(' ')[1], sent);
+            else if (str == "stats")
+                ftw.getStats(senderId);
+            else if (str == "reset")
+                ftw.resetStats(senderId);
             else
                 notRecognized(senderId);
         }
@@ -202,7 +206,16 @@ function updateLeader (senderId, val) {
     else if (val == 4)
         sendMessage(senderId, {text: "*quadruple DUCK !!!!*"});
 
-    Leaderboard.create({user_id: senderId, name: "", points: val}, function(err, docs) {
+    // Upsert
+    Leaderboard.updateOne({user_id: senderId}, {$inc: {points: val}}, {upsert: true}, function(errU, docsU) {
+        if (errU)
+            console.log("Error incrementing: " + errU);
+        else if (docsU.upserted) {
+            console.log("Created leaderboard: " + senderId);
+            setName(senderId);
+        }
+    });
+    /*Leaderboard.create({user_id: senderId, name: "", points: val}, function(err, docs) {
         if (err) {
             Leaderboard.updateOne({user_id: senderId}, { $inc: { points: val } }, function(errU, docsU) {
                 if (errU)
@@ -215,7 +228,7 @@ function updateLeader (senderId, val) {
             console.log("Created leaderboard: " + senderId);
             setName(senderId);
         }
-    });
+    });*/
 }
 
 function setName (senderId) {
