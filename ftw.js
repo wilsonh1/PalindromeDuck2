@@ -50,9 +50,9 @@ function checkAnswer (userId, answer, sent) {
                     var diff = (sent - uObj['unix'])/1000;
                     console.log(pObj['answer']);
                     if (pObj['answer'] == answer)
-                        sendMessage("Correct ! " + diff + "s");
+                        sendMessage(userId, {text: "Correct ! " + diff + "s"}, false);
                     else
-                        sendMessage("Incorrect " + diff + "s");
+                        sendMessage(userId, {text: "Incorrect " + diff + "s"}, false);
                 }
             });
         }
