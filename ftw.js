@@ -48,6 +48,7 @@ function checkAnswer (userId, answer, sent) {
                     console.log(err2);
                 else {
                     var diff = (sent - uObj['unix'])/1000;
+                    console.log(pObj['answer']);
                     if (pObj['answer'] == answer)
                         sendMessage("Correct ! " + diff + "s");
                     else
