@@ -96,6 +96,8 @@ function processMessage (event) {
                 getLeader(senderId, "behind");
             else if (str == "ftw")
                 ftw.getProblem(senderId);
+            else if (str.split(' ')[0] == "check")
+                ftw.checkAnswer(senderId, str.split(' ')[1], sent);
             else
                 notRecognized(senderId);
         }

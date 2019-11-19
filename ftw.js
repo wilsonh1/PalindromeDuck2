@@ -81,5 +81,6 @@ function sendMessage (recipientId, message, flag) {
 }
 
 module.exports = {
-    getProblem
+    getProblem,
+    checkAnswer
 };
