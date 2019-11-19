@@ -35,11 +35,13 @@ function getProblem (userId) {
 }
 
 function checkAnswer (userId, answer, sent) {
+    console.log(userId + " " + answer + " " + sent);
     var uQ = User.findOne({user_id: userId}).select({p_id: 1, unix: 1, _id: 0}).lean();
     uQ.exec(function(err, uObj) {
         if (err)
             console.log(err);
         else {
+            console.log(uObj['p_id']);
             var pQ = Problem.findOne({p_id: uObj['p_id']}).select({answer: 1, _id: 0}).lean();
             pQ.exec(function(err2, pObj) {
                 if (err2)
