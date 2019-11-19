@@ -68,7 +68,7 @@ function getAnswer (senderId, answer, sent) {
                     });
 
                     Problem.updateOne({p_id: uObj['p_id'], best: {$gt: diff}}, {best: diff}, function(errP , docsP) {
-                        if (errU)
+                        if (errP)
                             console.log("Error updating problem");
                         else
                             console.log("Updated problem best time " + uObj['p_id'] + " " + diff);
