@@ -30,7 +30,7 @@ function updateProblems (auth) {
         else {
             const rows = res.data.values;
             rows.forEach(function(row) {
-                Problem.updateOne({p_id: row[0]}, {statement: row[1], answer: row[2]}, {upsert: true}, function(errU, docsU) {
+                Problem.updateOne({p_id: row[0]}, {statement: row[1], answer: row[2], best: 1e9}, {upsert: true}, function(errU, docsU) {
                     if (errU)
                         console.log(errU);
                     else
