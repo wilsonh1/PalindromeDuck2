@@ -23,7 +23,7 @@ function updateProblems (auth) {
 
     sheets.spreadsheets.values.get({
         spreadsheetId: "1JuPMESrHBIAqvA5etCxCd3Gjz7BkKW-TQluAHASgOjc",
-        range: "Sheet1!A2:C"
+        range: 'Sheet1!A2:C'
     }, (err, res) => {
         if (err)
             console.log(err);
