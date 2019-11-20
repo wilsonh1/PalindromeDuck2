@@ -19,7 +19,7 @@ jwt.authorize((err, response) => {
 });
 
 function updateProblems (auth) {
-    const sheets = google.sheets({version: 'v4', auth'});
+    const sheets = google.sheets({version: 'v4', auth});
 
     sheets.spreadsheets.values.get({
         spreadsheetID: "1JuPMESrHBIAqvA5etCxCd3Gjz7BkKW-TQluAHASgOjc",
