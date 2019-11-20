@@ -4,7 +4,7 @@ const {google} = require('googleapis');
 
 const mongoose = require('mongoose');
 var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
-var Problem = require('./models/member');
+var Problem = require('./models/problem');
 
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 const jwt = new google.auth.JWT(
