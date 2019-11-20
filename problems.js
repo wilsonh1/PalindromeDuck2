@@ -22,7 +22,7 @@ function updateProblems (auth) {
     const sheets = google.sheets({version: 'v4', auth});
 
     sheets.spreadsheets.values.get({
-        spreadsheetID: "1JuPMESrHBIAqvA5etCxCd3Gjz7BkKW-TQluAHASgOjc",
+        spreadsheetId: "1JuPMESrHBIAqvA5etCxCd3Gjz7BkKW-TQluAHASgOjc",
         range: "Sheet1!A2:C"
     }, (err, res) => {
         if (err)
