@@ -115,7 +115,7 @@ function getStats (senderId) {
             else {
                 sendMessage(senderId, {text: "Number of questions answered: " + uObj['count']}, false);
                 sendMessage(senderId, {text: "Accuracy: " + ((uObj['correct']/uObj['count'])*100).toFixed(2) + "\%"}, false);
-                sendMessage(senderId, {text: "Average time: " + (uObj['time']/uObj['count']) + "s"});
+                sendMessage(senderId, {text: "Average time: " + (uObj['time']/uObj['count']).toFixed(3) + "s"});
             }
         }
     });
