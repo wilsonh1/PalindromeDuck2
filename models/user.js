@@ -6,7 +6,8 @@ var UserSchema = new Schema({
     p_id: Number,
     unix: Number,
     count: Number,
-    correct: Number
+    correct: Number,
+    time: Number
 });
 
 module.exports = mongoose.model("User", UserSchema);

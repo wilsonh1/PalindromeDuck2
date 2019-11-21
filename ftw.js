@@ -24,12 +24,24 @@ function getProblem (senderId) {
                     console.log(errC);
                 else {
                     console.log("Updated ftw user: " + senderId);
-                    var pQ = Problem.findOne({p_id: rand}).select({statement: 1, _id: 0}).lean();
+                    var pQ = Problem.findOne({p_id: rand}).select({statement: 1, image: 1, _id: 0}).lean();
                     pQ.exec(function(errP, pObj) {
                         if (errP)
                             console.log(errP);
-                        else
+                        else {
                             sendMessage(senderId, {text: pObj['statement']}, true);
+                            if (pObj['image']) {
+                                sendMessage(senderId, {
+                                    attachment: {
+                                        type: "image",
+                                        payload: {
+                                            url: pObj['image'],
+                                            is_reusable: true
+                                        }
+                                    }
+                                }, false);
+                            }
+                        }
                     });
                 }
             });
@@ -64,28 +76,28 @@ function getAnswer (senderId, answer, sent) {
 
                     var upd = (pObj['answer'] == answer);
                     if (upd) {
-                        sendMessage(senderId, {text: "Correct! " + diff + "s"}, false);
-                        if (diff <= pObj['best'])
+                        sendMessage(senderId, {text: "Correct ! " + diff + "s"}, false);
+                        /*if (diff <= pObj['best'])
                             sendMessage(senderId, {text: "New best time !"}, false);
                         else
-                            sendMessage(senderId, {text: "Best time " + pObj['best'] + "s"});
+                            sendMessage(senderId, {text: "Best time " + pObj['best'] + "s"});*/
                     }
                     else
                         sendMessage(senderId, {text: "Incorrect " + diff + "s"}, false);
 
-                    User.updateOne({user_id: senderId}, {p_id: -1, $inc: {count: 1, correct: upd}}, function(errU, docsU) {
+                    User.updateOne({user_id: senderId}, {p_id: -1, $inc: {count: 1, correct: upd, time: diff}}, function(errU, docsU) {
                         if (errU)
                             console.log("Error updating user");
                         else
                             console.log("Updated " + senderId + " " + upd);
                     });
 
-                    Problem.updateOne({p_id: uObj['p_id'], best: {$gt: diff}}, {best: diff}, function(errP , docsP) {
+                    /*Problem.updateOne({p_id: uObj['p_id'], best: {$gt: diff}}, {best: diff}, function(errP , docsP) {
                         if (errP)
                             console.log("Error updating problem");
                         else
                             console.log("Updated problem best time " + uObj['p_id'] + " " + diff);
-                    });
+                    });*/
                 }
             });
         }
@@ -93,16 +105,17 @@ function getAnswer (senderId, answer, sent) {
 }
 
 function getStats (senderId) {
-    var uQ = User.findOne({user_id: senderId}).select({count: 1, correct: 1, _id: 0}).lean();
+    var uQ = User.findOne({user_id: senderId}).select({count: 1, correct: 1, time: 1, _id: 0}).lean();
     uQ.exec(function(err, uObj) {
         if (err)
             console.log(err);
         else {
             if (!uObj)
-                sendMessage(senderId, {text: "Not found"}, false);
+                sendMessage(senderId, {text: "Not found."}, false);
             else {
-                sendMessage(senderId, {text: "Number of questions answered " + uObj['count']}, false);
-                sendMessage(senderId, {text: "Accuracy " + ((uObj['correct']/uObj['count'])*100).toFixed(2) + "\%"}, false);
+                sendMessage(senderId, {text: "Number of questions answered: " + uObj['count']}, false);
+                sendMessage(senderId, {text: "Accuracy: " + ((uObj['correct']/uObj['count'])*100).toFixed(2) + "\%"}, false);
+                sendMessage(senderId, {text: "Average time " + (uObj['time']/uObj['count']) + "s"});
             }
         }
     });
@@ -114,9 +127,9 @@ function resetStats (senderId) {
             console.log(err);
         else {
             if (!docs.n)
-                sendMessage(senderId, {text: "Not found"}, false);
+                sendMessage(senderId, {text: "Not found."}, false);
             else
-                sendMessage(senderId, {text: "Reset stats"}, false);
+                sendMessage(senderId, {text: "Reset stats."}, false);
         }
     });
 }
