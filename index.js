@@ -214,6 +214,8 @@ function updateLeader (senderId, val) {
             console.log("Created leaderboard: " + senderId);
             setName(senderId);
         }
+        else
+            console.log("Incremented: " + senderId + " " + val);
     });
     /*Leaderboard.create({user_id: senderId, name: "", points: val}, function(err, docs) {
         if (err) {
