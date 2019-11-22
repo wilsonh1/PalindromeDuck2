@@ -24,25 +24,25 @@ function getProblem (senderId) {
                     console.log(errC);
                 else {
                     console.log("Updated ftw user: " + senderId);
-                    var pQ = Problem.findOne({p_id: rand}).select({statement: 1, image: 1, _id: 0}).lean();
-                    pQ.exec(function(errP, pObj) {
-                        if (errP)
-                            console.log(errP);
-                        else {
-                            sendMessage(senderId, {text: pObj['statement']}, true);
-                            if (pObj['image']) {
-                                sendMessage(senderId, {
-                                    attachment: {
-                                        type: "image",
-                                        payload: {
-                                            url: pObj['image'],
-                                            is_reusable: true
-                                        }
-                                    }
-                                }, false);
+                }
+            });
+            var pQ = Problem.findOne({p_id: rand}).select({statement: 1, image: 1, _id: 0}).lean();
+            pQ.exec(function(errP, pObj) {
+                if (errP)
+                console.log(errP);
+                else {
+                    sendMessage(senderId, {text: pObj['statement']}, true);
+                    if (pObj['image']) {
+                        sendMessage(senderId, {
+                            attachment: {
+                                type: "image",
+                                payload: {
+                                    url: pObj['image'],
+                                    is_reusable: true
+                                }
                             }
-                        }
-                    });
+                        }, false);
+                    }
                 }
             });
 
