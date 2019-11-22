@@ -229,7 +229,7 @@ function sendMessage (recipientId, message) {
         method: "POST",
         json: {
             recipient: {id: recipientId},
-            message: message,
+            message: message
         }
     }, function (err, response, body) {
         if (err)

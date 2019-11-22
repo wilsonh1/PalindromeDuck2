@@ -206,7 +206,6 @@ function updateLeader (senderId, val) {
     else if (val == 4)
         sendMessage(senderId, {text: "*quadruple DUCK !!!!*"});
 
-    // Upsert
     Leaderboard.updateOne({user_id: senderId}, {$inc: {points: val}}, {upsert: true}, function(errU, docsU) {
         if (errU)
             console.log("Error incrementing: " + errU);
@@ -217,20 +216,6 @@ function updateLeader (senderId, val) {
         else
             console.log("Incremented: " + senderId + " " + val);
     });
-    /*Leaderboard.create({user_id: senderId, name: "", points: val}, function(err, docs) {
-        if (err) {
-            Leaderboard.updateOne({user_id: senderId}, { $inc: { points: val } }, function(errU, docsU) {
-                if (errU)
-                    console.log("Error incrementing: " + errU);
-                else
-                    console.log("Incremented: " + senderId + " " + val);
-            });
-        }
-        else {
-            console.log("Created leaderboard: " + senderId);
-            setName(senderId);
-        }
-    });*/
 }
 
 function setName (senderId) {
@@ -311,12 +296,10 @@ function sendMessage (recipientId, message) {
         method: "POST",
         json: {
             recipient: {id: recipientId},
-            message: message,
+            message: message
         }
     }, function (err, response, body) {
         if (err)
             console.log("Error sending messages: " + err);
-        else
-            console.log("Sent message: " + recipientId);
     });
 }
