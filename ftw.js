@@ -26,6 +26,7 @@ function getProblem (senderId) {
                     console.log("Updated ftw user: " + senderId);
                 }
             });
+
             var pQ = Problem.findOne({p_id: rand}).select({statement: 1, image: 1, _id: 0}).lean();
             pQ.exec(function(errP, pObj) {
                 if (errP)
@@ -152,7 +153,7 @@ function sendMessage (recipientId, message, flag) {
                 if (errT)
                     console.log(errT);
                 else
-                    console.log("Set time: " + recipientId);
+                    console.log("Set time: " + recipientId + " " + date);
             });
         }
     });
