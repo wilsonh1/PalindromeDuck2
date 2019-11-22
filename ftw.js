@@ -63,17 +63,19 @@ function getAnswer (senderId, answer, sent) {
                 sendMessage(senderId, {text: "Ask for new problem."}, false);
                 return;
             }
+
+            if (!uObj['unix'] || sent<uObj['unix']) {
+                sendMessage(senderId, {text: "Wait for problem statement."}, false);
+                return;
+            }
+            var diff = (sent - uObj['unix'])/1000;
+
             var pQ = Problem.findOne({p_id: uObj['p_id']}).select({answer: 1, _id: 0}).lean();
             pQ.exec(function(err2, pObj) {
                 if (err2)
                     console.log(err2);
                 else {
-                    var diff = (sent - uObj['unix'])/1000;
-                    //console.log(pObj['answer']);
-                    if (diff < 0) {
-                        sendMessage(senderId, {text: "Wait for problem statement."}, false);
-                        return;
-                    }
+
 
                     var upd = (pObj['answer'] == answer);
                     if (upd) {
