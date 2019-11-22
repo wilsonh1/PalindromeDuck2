@@ -111,7 +111,7 @@ function getStats (senderId) {
         if (err)
             console.log(err);
         else {
-            if (!uObj)
+            if (!uObj || !uObj['count'])
                 sendMessage(senderId, {text: "Not found."}, false);
             else {
                 sendMessage(senderId, {text: "Number of questions answered: " + uObj['count']}, false);
