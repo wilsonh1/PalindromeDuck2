@@ -316,5 +316,7 @@ function sendMessage (recipientId, message) {
     }, function (err, response, body) {
         if (err)
             console.log("Error sending messages: " + err);
+        else
+            console.log("Sent message: " + recipientId);
     });
 }

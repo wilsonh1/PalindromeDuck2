@@ -75,8 +75,6 @@ function getAnswer (senderId, answer, sent) {
                 if (err2)
                     console.log(err2);
                 else {
-
-
                     var upd = (pObj['answer'] == answer);
                     if (upd) {
                         sendMessage(senderId, {text: "Correct ! " + diff + "s"}, false);
