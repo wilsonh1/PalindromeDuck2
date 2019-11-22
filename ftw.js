@@ -63,7 +63,7 @@ function getAnswer (senderId, answer, sent) {
                 sendMessage(senderId, {text: "Ask for new problem."}, false);
                 return;
             }
-            var pQ = Problem.findOne({p_id: uObj['p_id']}).select({answer: 1, best: 1, _id: 0}).lean();
+            var pQ = Problem.findOne({p_id: uObj['p_id']}).select({answer: 1, _id: 0}).lean();
             pQ.exec(function(err2, pObj) {
                 if (err2)
                     console.log(err2);
@@ -86,7 +86,7 @@ function getAnswer (senderId, answer, sent) {
                     else
                         sendMessage(senderId, {text: "Incorrect " + diff + "s"}, false);
 
-                    User.updateOne({user_id: senderId}, {p_id: -1, $inc: {count: 1, correct: upd, time: diff}}, function(errU, docsU) {
+                    User.updateOne({user_id: senderId}, {p_id: -1, unix: 0, $inc: {count: 1, correct: upd, time: diff}}, function(errU, docsU) {
                         if (errU)
                             console.log("Error updating user");
                         else
