@@ -100,8 +100,8 @@ function getStats (senderId) {
             if (!uObj || !uObj['count'])
                 sendMessage(senderId, {text: "Not found."}, false);
             else {
-                sendMessage(senderId, {text: "Number of questions answered: " + uObj['count']}, false);
-                sendMessage(senderId, {text: "Accuracy: " + ((uObj['correct']/uObj['count'])*100).toFixed(2) + "\%"}, false);
+                sendMessage(senderId, {text: "Number of questions answered: " + uObj['count']});
+                sendMessage(senderId, {text: "Accuracy: " + ((uObj['correct']/uObj['count'])*100).toFixed(2) + "\%"});
                 sendMessage(senderId, {text: "Average time: " + (uObj['time']/uObj['count']).toFixed(3) + "s"});
             }
         }
@@ -121,7 +121,7 @@ function resetStats (senderId) {
     });
 }
 
-function sendMessage (recipientId, message, flag) {
+function sendMessage (recipientId, message, flag = false) {
     request({
         url: "https://graph.facebook.com/v4.0/me/messages",
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
