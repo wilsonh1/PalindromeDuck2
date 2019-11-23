@@ -122,6 +122,7 @@ function resetStats (senderId) {
 }
 
 function sendMessage (recipientId, message, flag = false) {
+    console.log(message + " " + flag);
     request({
         url: "https://graph.facebook.com/v4.0/me/messages",
         qs: {access_token: process.env.PAGE_ACCESS_TOKEN},
