@@ -7,6 +7,31 @@ var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUn
 var User = require('./models/user');
 var Problem = require('./models/problem');
 
+function returnProblem () {
+    var cnt = Problem.count();
+    cnt.exec(function(err, res) {
+        if (err)
+            console.log(err);
+        else {
+            if (!res) {
+		console.log("No problems found");
+                return undefined;
+            }
+            var rand = Math.floor(Math.random() * res);
+
+            var pQ = Problem.findOne({p_id: rand}).select({statement: 1, image: 1, _id: 0}).lean();
+            pQ.exec(function(errP, pObj) {
+                if (errP)
+                    console.log(errP);
+                else {
+		    return pObj;
+                }
+            });
+        }
+    });
+    return undefined;
+}
+
 function getProblem (senderId) {
     var cnt = Problem.count();
     cnt.exec(function(err, res) {
@@ -147,8 +172,10 @@ function sendMessage (recipientId, message, flag = false) {
 }
 
 module.exports = {
+    returnProblem,
     getProblem,
     getAnswer,
     getStats,
+    sendMessage,
     resetStats
 };
