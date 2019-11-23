@@ -252,7 +252,7 @@ function getLeader (senderId, flag) {
                 sendMessage(senderId, {text: "not found on leaderboard"});
             else {
                 if (!flag) {
-                    var x = Leaderboard.count({points : {"$gt" : lObj['points']}});
+                    var x = Leaderboard.countDocuments({points : {"$gt" : lObj['points']}});
                     x.exec(function(err2, res) {
                         if (err2)
                             console.log(err2);
@@ -278,7 +278,7 @@ function getDiff (senderId, points, flag) {
             console.log(err);
         else {
             var p = (!lObj[0]) ? points : lObj[0]['points'];
-            var x = Leaderboard.count({points : {"$gt" : p}});
+            var x = Leaderboard.countDocuments({points : {"$gt" : p}});
             x.exec(function(err2, res) {
                 if (err2)
                     console.log(err2);
