@@ -52,13 +52,11 @@ function getProblem (senderId) {
 }
 
 function getAnswer (senderId, answer, sent) {
-    //console.log(senderId + " " + answer + " " + sent);
     var uQ = User.findOne({user_id: senderId}).select({p_id: 1, unix: 1, _id: 0}).lean();
     uQ.exec(function(err, uObj) {
         if (err)
             console.log(err);
         else {
-            //console.log(uObj['p_id']);
             if (!uObj || uObj['p_id'] == -1) {
                 sendMessage(senderId, {text: "Ask for new problem."}, false);
                 return;
@@ -76,13 +74,8 @@ function getAnswer (senderId, answer, sent) {
                     console.log(err2);
                 else {
                     var upd = (pObj['answer'] == answer);
-                    if (upd) {
+                    if (upd)
                         sendMessage(senderId, {text: "Correct ! " + diff + "s"}, false);
-                        /*if (diff <= pObj['best'])
-                            sendMessage(senderId, {text: "New best time !"}, false);
-                        else
-                            sendMessage(senderId, {text: "Best time " + pObj['best'] + "s"});*/
-                    }
                     else
                         sendMessage(senderId, {text: "Incorrect " + diff + "s"}, false);
 
@@ -92,13 +85,6 @@ function getAnswer (senderId, answer, sent) {
                         else
                             console.log("Updated " + senderId + " " + upd);
                     });
-
-                    /*Problem.updateOne({p_id: uObj['p_id'], best: {$gt: diff}}, {best: diff}, function(errP , docsP) {
-                        if (errP)
-                            console.log("Error updating problem");
-                        else
-                            console.log("Updated problem best time " + uObj['p_id'] + " " + diff);
-                    });*/
                 }
             });
         }
