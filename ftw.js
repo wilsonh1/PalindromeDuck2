@@ -117,7 +117,7 @@ function getAnswer (senderId, answer, sent) {
                     else
                         sendMessage(senderId, {text: "Incorrect " + diff + "s"}, false);
 
-                    User.updateOne({user_id: senderId}, {p_id: -1, unix: 0, gaame_id: 0, $inc: {count: 1, correct: upd, time: diff}}, function(errU, docsU) {
+                    User.updateOne({user_id: senderId}, {p_id: -1, unix: 0, game_id: 0, $inc: {count: 1, correct: upd, time: diff}}, function(errU, docsU) {
                         if (errU)
                             console.log("Error updating user");
                         else
