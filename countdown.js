@@ -5,44 +5,18 @@ var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUn
 var Schema = mongoose.Schema;
 const ftw = require('./ftw');
 const User = require('./models/user'); 
-
-var CountdownSchema = new Schema ({
-    _id: Number, // unique id identifier
-    size: Number, // size stores number of people wanted
-    //map of people to scores 
-    scores: {
-	type: Map,
-	of: Number
-    },
-    // map of problems to boolean flag (claimed equals true) => Map[Problem, Boolean]
-    problems: {
-        type: Map,
-        of: Object
-    },
-    currentSize: Number,
-    // index of current problem which we are on
-    problemIndex: Number,
-    // marks if the game has finished or not
-    // used to filter results for possible deletion
-    inProgress: Boolean,
-    // check if game has started emitting problems
-    launched: Boolean
-});
-
-const Countdown  = mongoose.model("Countdown", CountdownSchema)
-
-var interval = undefined; // timer used to keep track of when a problem's time is up
+const Countdown  = require('./models/Countdown')
 
 function startCountdown(senderId, name, size) {
     const id = new Date().getTime() // take advantage of the fact that time is monotonically increasing to generate id
-    Countdown.create({_id: id, currentSize: 0,  size: size, scores: {}, problems: {}, problemIndex: 0, inProgress: true}, function (err, res) {
+    Countdown.create({_id: id, currentSize: 0, launched: false,  size: size, scores: {}, problems: {}, problemIndex: 0, inProgress: true}, function (err, res) {
         if (err) {
 	    console.log(err);
 	} else {
 	    console.log("Successfully created game with id: " + id);
+            joinIfNotLaunched(senderId, gameId);
         }
     });
-    joinCountdown(senderId, gameId);
 }
 
 function joinIfNotLaunched(senderId, gameId) {
@@ -59,22 +33,22 @@ function joinCountdown(senderId, gameId) {
 	    console.log(err);
 	} else {
 	    console.log("Adding user to game");
-	}
-    });
-    Countdown.findById(gameId, function (err, doc) {
-	if (err) {
-	    console.log(err);
-	} else {
-	    doc.scores.set(senderId, 0);
-	    doc.currentSize++;
-	    if (doc.currentSize == doc.size) {
-		ftw.populateProblemSet(doc);
-		doc.launched = true;
-	    } 
-	    doc.save(function (err, res) {
-		if (err) console.log(err);
-	    });
-	    startNextGameSequence(doc);
+    	    Countdown.findById(gameId, function (err, doc) {
+	        if (err) {
+	    	    console.log(err);
+		} else {
+	    	    doc.scores.set(senderId, 0);
+	    	    doc.currentSize++;
+	    	    if (doc.currentSize == doc.size) {
+			ftw.populateProblemSet(doc);
+			doc.launched = true;
+	    	    } 
+	    	    doc.save(function (err, res) {
+		        if (err) console.log(err);
+	    	    });
+	    	    startNextGameSequence(doc);
+	        }
+    	    });
 	}
     });
 }
@@ -122,13 +96,17 @@ function startNextGameSequence(doc) {
 }
 
 // this starts next step by triggering the sending of the next problem
-function endGameSequence(doc, lastMeasuredIndex) {
-   if (lastMeasuredIndex == doc.problemIndex) {
-	sendMessageToAllParticipants(doc, "Problem period has ended.")
-        doc.problemIndex++;
-        doc.save(function (err, res) { if (err) console.log(err); } );
-        setTimeout(function() { startNextGameSequence(doc) }, 2000)
-   }
+function endGameSequence(oldDoc, lastMeasuredIndex) {
+   // we want to find the updated version of the doc, just in case it was overwritten by another process
+   Countdown.findById(oldDoc._id, function (err, doc){
+   	if (lastMeasuredIndex == doc.problemIndex) {
+	    sendMessageToAllParticipants(doc, "Problem period has ended.")
+            doc.problemIndex++;
+            incrementAllParticipantProblemIndexes(countdownDoc);
+            doc.save(function (err, res) { if (err) console.log(err); } );
+            setTimeout(function() { startNextGameSequence(doc) }, 2000);
+        }
+   });
 }
 
 function incrementAllParticipantProblemIndexes(doc) {
@@ -153,7 +131,6 @@ function answerQuestion(senderId, name, gameId, answer) {
 		  	    sendMessageToAllParticipants(countdownDoc, name + " has correctly answered the question.");
 			    countdownDoc.scores.set(senderId, countdownDoc.scores.get(senderId) + 1);
 			    countdownDoc.save(function (err, res) {if (err) console.log(err); } );
-			    incrementAllParticipantProblemIndexes(countdownDoc);
 			    endGameSequence(countdownDoc, userDoc.current_problem);
 			} else {
 			    ftw.sendMessage(senderId, {text: "Wrong. Please try it again."});
