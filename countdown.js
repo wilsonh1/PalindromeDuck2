@@ -4,14 +4,12 @@ const mongoose = require('mongoose');
 var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 var Schema = mongoose.Schema;
 const ftw = require('./ftw');
+const User = require('./models/user'); 
 
 var CountdownSchema = new Schema ({
-    count: Number,
-    // map of people to scores => Map[String, Number]
-    people: {
-        type: Map,
-        of: String
-    },
+    _id: Number, // unique id identifier
+    size: Number, // size stores number of people wanted
+    //map of people to scores 
     scores: {
 	type: Map,
 	of: Number
@@ -21,67 +19,83 @@ var CountdownSchema = new Schema ({
         type: Map,
         of: Object
     },
+    currentSize: Number,
+    // index of current problem which we are on
     problemIndex: Number,
-    currentCount: Number,
-    inProgress: Boolean
+    // marks if the game has finished or not
+    // used to filter results for possible deletion
+    inProgress: Boolean,
+    // check if game has started emitting problems
+    launched: Boolean
 });
 
 const Countdown  = mongoose.model("Countdown", CountdownSchema)
 
-const emptyCountDownObject = new Countdown({
-    count: 0,
-    problems: {},
-    people: {},
-    scores: {},
-    currentCount: 0,
-    inProgress: false
-});
-
-var currentCountdown = emptyCountDownObject
-var interval = undefined // timer used to keep track of when a problem's time is up
+var interval = undefined; // timer used to keep track of when a problem's time is up
 
 function startCountdown(senderId, name, size) {
-    // there might be concerns that this is not thread-safe, will need to consider
-    if (currentCountdown != emptyCountdownObject) {
-	ftw.sendMessage(senderId, {text: "Game in progress"}, false);
-	return;
-    }
-    currentCountdown = new Countdown({
-	count: size,
-	problems: {},
-	people: {},
-	scores: {},
-	currentCount: 0,
-	inProgress: true
+    const id = new Date().getTime() // take advantage of the fact that time is monotonically increasing to generate id
+    Countdown.create({_id: id, currentSize: 0,  size: size, scores: {}, problems: {}, problemIndex: 0, inProgress: true}, function (err, res) {
+        if (err) {
+	    console.log(err);
+	} else {
+	    console.log("Successfully created game with id: " + id);
+        }
     });
-    generateProblems(10);
-    joinCountdown(senderId, name);
+    joinCountdown(senderId, gameId);
 }
 
 function convertToStr(num) {
     return num.toString(10); // convert number to base 10 string
 }
 
-function generateProblems(size) {
-    for (int i = 0; i < size; i++) {
-	currentCountdown.problems.set(convertToStr(i), ftw.returnProblem());	
-    }  
+function generateProblemSet(doc, num) {
+    for (int i = 0; i < num; i++) {
+	doc.problems.set(convertToStr(i), ftw.returnProblem());	
+    } 
 }
 
-function joinCountdown(senderId, name) {
-    if (currentCountdown != emptyCountdownObject) {
-	ftw.sendMessage(senderId, {text: "Game in progress"}, false);
-        return;
-    }
-    currentCountdown.people.set(name, senderId);
-    currentCountdown.scores.set(name, 0);
-    currentCountdown.currentCount++;
-    ftw.sendMessage(senderId, {test: "Joined the game successfully"}, false);
-    if (currentCountdown.currentCount == currentCountdown.count) {
-	launchGame();
-    }
+// TODO: join if this thing has not launched
+function joinIfNotLaunched(gameId) {
+    
 }
 
-function launchGame() {
+function joinCountdown(senderId, gameId) {
+    User.updateOne({user_id: senderId}, {game_id: id}, function (err, res) {
+    	if (err) {
+	    console.log(err);
+	} else {
+	    console.log("Adding user to game");
+	}
+    });
+    Countdown.findById(gameId, function (err, doc) {
+	if (err) {
+	    console.log(err);
+	} else {
+	    doc.scores.set(senderId, 0);
+	    doc.currentSize++;
+	    if (doc.currentSize == doc.size) {
+		generateProblemSet(doc, 10);
+		doc.launched = true;
+	    } 
+	    doc.save(function (err, res) {
+		if (err) console.log(err);
+	    });
+	    sendProblem(doc);
+	}
+    });
+}
+
+// make sure to check in models/User if user is part of countdown
+function sendProblem(doc) {
+    for (const val of doc.people.keys) {
+	// send problem to them
+    }
+    setTimeout(function() {
+        //terminateIfNotAnswered()
+    }, 15000); 
+}
+
+function updateMap(id, ) {
 }
  
