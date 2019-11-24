@@ -4,8 +4,8 @@ var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     user_id: {type: String, unique: true},
     p_id: Number,
-    game_id: Number,
-    current_problem: Number,
+    game_id: {type: Number, default: 0},
+    current_problem: {type: Number, default: 0},
     unix: Number,
     count: Number,
     correct: Number,
