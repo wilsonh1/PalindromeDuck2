@@ -9,7 +9,7 @@ var Problem = require('./models/problem');
 
 function getShuffledArray(size, slice) {
     var array = []
-    for (int i = 0; i < size; i++) array[i] = i;
+    for (var i = 0; i < size; i++) array[i] = i;
     var tmp, current, top = array.length;
     if(top) while(--top) {
         current = Math.floor(Math.random() * (top + 1));
@@ -18,7 +18,7 @@ function getShuffledArray(size, slice) {
         array[top] = tmp;
     }
     var result = []
-    for (int i = 0; i < slice; i++) result[i] = array[i];
+    for (var i = 0; i < slice; i++) result[i] = array[i];
     return result;
 }
 
@@ -57,7 +57,7 @@ function getProblem (senderId) {
             }
             var rand = Math.floor(Math.random() * res);
 
-            User.updateOne({user_id: senderId}, {user_id: senderId, p_id: rand}, {upsert: true}, function(errC, docsC) {
+            User.updateOne({user_id: senderId}, {user_id: senderId, p_id: rand, game_id: 0}, {upsert: true}, function(errC, docsC) {
                 if (errC)
                     console.log(errC);
                 else {
@@ -117,7 +117,7 @@ function getAnswer (senderId, answer, sent) {
                     else
                         sendMessage(senderId, {text: "Incorrect " + diff + "s"}, false);
 
-                    User.updateOne({user_id: senderId}, {p_id: -1, unix: 0, $inc: {count: 1, correct: upd, time: diff}}, function(errU, docsU) {
+                    User.updateOne({user_id: senderId}, {p_id: -1, unix: 0, gaame_id: 0, $inc: {count: 1, correct: upd, time: diff}}, function(errU, docsU) {
                         if (errU)
                             console.log("Error updating user");
                         else

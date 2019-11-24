@@ -12,6 +12,7 @@ var Leaderboard = require('./models/leaderboard');
 var Palindrome = require('./models/palindrome');
 
 const ftw = require('./ftw');
+const countdown = require('./countdown')
 
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
@@ -96,12 +97,24 @@ function processMessage (event) {
                 getLeader(senderId, "behind");
             else if (str == "ftw")
                 ftw.getProblem(senderId);
-            else if (str.split(' ')[0] == "!")
-                ftw.getAnswer(senderId, str.split(' ')[1], sent);
-            else if (str == "stats")
+            else if (str.split(' ')[0] == "!") {
+		User.findOne({user_id: senderId}, function (err, doc) {
+                    if (doc.gameId != 0) {
+			countdown.answerQuestion(senderId, doc.gameId, str.split(' ')[1])
+		    } else {
+			ftw.getAnswer(senderId, str.split(' ')[1], sent);
+		    }
+		}); 
+            } else if (str == "stats")
                 ftw.getStats(senderId);
             else if (str == "reset")
                 ftw.resetStats(senderId);
+	    else if (str.split(' ')[0] == "countdown")
+		countdown.startCountdown(senderId, parseInt(str.split(' ')[1], 10));
+	    else if (str == "list")
+		countdown.grabAllCountdownMatches(senderId)
+	    else if (str.split(' ')[0] == "join") 
+		countdown.joinIfNotLaunched(senderId, parseInt(str.split(' ')[1], 10));               		
             else
                 notRecognized(senderId);
         }

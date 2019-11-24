@@ -7,7 +7,7 @@ const ftw = require('./ftw');
 const User = require('./models/user'); 
 const Countdown  = require('./models/Countdown')
 
-function startCountdown(senderId, name, size) {
+function startCountdown(senderId, size) {
     const id = new Date().getTime() // take advantage of the fact that time is monotonically increasing to generate id
     Countdown.create({_id: id, currentSize: 0, launched: false,  size: size, scores: {}, problems: {}, problemIndex: 0, inProgress: true}, function (err, res) {
         if (err) {
@@ -83,7 +83,8 @@ function sendMessageToAllParticipants(doc, text) {
 // make sure to check in models/User if user is part of countdown
 function startNextGameSequence(doc) {
     if (doc.problemIndex == 10) {
-	// sendMessage concluding problem cycle and listing results
+	// sendMessage concluding problem cycle and listing result
+	concludeGameSequence(doc);
 	return;
     }
     const currIndex = doc.problemIndex;
@@ -109,6 +110,18 @@ function endGameSequence(oldDoc, lastMeasuredIndex) {
    });
 }
 
+function concludeGameSequence(doc) {
+   sendMessageToAllParticipants(doc, {text: "Game has ended"});
+   Countdown.deleteOne({doc._id}, function (err) { if(err) console.log(err); });
+   for (const senderId of doc.scores.keys) {
+	ftw.sendMessage(senderId, {text: "Here is your score: " + doc.scores.get(key)});
+	User.findOne({user_id: senderId}, function (err, doc) {
+	    doc.game_id = 0;
+	    doc.save(function (err, product) {if (err) console.log(err); } );
+	});
+   }
+}
+
 function incrementAllParticipantProblemIndexes(doc) {
     for (const senderId of doc.scores.keys) {
     	User.findOne({user_id: senderId}, function (err, userDoc) {
@@ -119,7 +132,7 @@ function incrementAllParticipantProblemIndexes(doc) {
 }
 
 // index.js will check if sender is in game
-function answerQuestion(senderId, name, gameId, answer) {
+function answerQuestion(senderId, gameId, answer) {
    User.findOne({game_id: gameId}, function (err, userDoc) {
        	if (err) console.log(err);
        	else {
@@ -128,7 +141,7 @@ function answerQuestion(senderId, name, gameId, answer) {
 	     	  else {
 			const index = userDoc.current_problem
 			if (index == countdownDoc.problemIndex && countdownDoc.problems.get(userDoc.current_problem.toString(10)).answer == answer) {
-		  	    sendMessageToAllParticipants(countdownDoc, name + " has correctly answered the question.");
+		  	    sendMessageToAllParticipants(countdownDoc, "Someone has correctly answered the question.");
 			    countdownDoc.scores.set(senderId, countdownDoc.scores.get(senderId) + 1);
 			    countdownDoc.save(function (err, res) {if (err) console.log(err); } );
 			    endGameSequence(countdownDoc, userDoc.current_problem);
@@ -140,4 +153,20 @@ function answerQuestion(senderId, name, gameId, answer) {
       	}
    });
 }
- 
+
+// lists all non-launched countdown matches
+function grabAllCountdownMatches(senderId) {
+    Countdown.find({launched: false}, function (err, docs){
+	ftw.sendMessage(senderId, {text: "Here are available games: "})
+	for (const doc of docs) {
+	    ftw.sendMessage(senderId, {text: doc._id});
+	}
+    });
+}
+
+module.exports = [
+    answerQuestion,
+    grabAllCountdownMatches,
+    joinIfNotLaunched,
+    startCountdown
+] 
