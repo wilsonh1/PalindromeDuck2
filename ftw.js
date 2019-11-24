@@ -33,7 +33,7 @@ function populateProblemSet (countdownDoc) {
             }
             var randArray = getShuffledArray(res, 10);
 
-            Problem.find({'_id': {$in: randArray}, function (err, docs) {
+            Problem.find({'_id': {$in: randArray}}, function (err, docs) {
 	 	var index = 0;
 		for (const doc of docs) {
 		     countdownDoc.problems.set(index.toString(10), doc);

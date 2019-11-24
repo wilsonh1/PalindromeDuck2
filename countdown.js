@@ -54,7 +54,7 @@ function joinIfNotLaunched(senderId, gameId) {
 }
 
 function joinCountdown(senderId, gameId) {
-    User.updateOne({user_id: senderId}, {game_id: id}, function (err, res) {
+    User.updateOne({user_id: senderId}, {game_id: id, current_problem: 0}, {upsert: true}, function (err, res) {
     	if (err) {
 	    console.log(err);
 	} else {
@@ -113,7 +113,7 @@ function startNextGameSequence(doc) {
 	return;
     }
     const currIndex = doc.problemIndex;
-    var problemDoc = doc.problems.get(currIndex.toString("10"));
+    var problemDoc = doc.problems.get(currIndex.toString(10));
     sendMessageToAllParticipants(doc, problemDoc.text);
     sendImageToAllParticipants(doc, problemDoc);
     setTimeout(function() {
@@ -127,8 +127,40 @@ function endGameSequence(doc, lastMeasuredIndex) {
 	sendMessageToAllParticipants(doc, "Problem period has ended.")
         doc.problemIndex++;
         doc.save(function (err, res) { if (err) console.log(err); } );
+        setTimeout(function() { startNextGameSequence(doc) }, 2000)
    }
-   doc.save(function (err, res) { if (err) console.log(err); } );
-   setTimeout(function() { startNextGameSequence(doc) }, 2000)
+}
+
+function incrementAllParticipantProblemIndexes(doc) {
+    for (const senderId of doc.scores.keys) {
+    	User.findOne({user_id: senderId}, function (err, userDoc) {
+	    userDoc.current_problem++;
+	    userDoc.save(function (err, props) {if (err) console.log(err); });
+	});	
+    }
+}
+
+// index.js will check if sender is in game
+function answerQuestion(senderId, name, gameId, answer) {
+   User.findOne({game_id: gameId}, function (err, userDoc) {
+       	if (err) console.log(err);
+       	else {
+	     Countdown.findById(gameId, function (err, countdownDoc) {
+		  if (err) console.log(err);
+	     	  else {
+			const index = userDoc.current_problem
+			if (index == countdownDoc.problemIndex && countdownDoc.problems.get(userDoc.current_problem.toString(10)).answer == answer) {
+		  	    sendMessageToAllParticipants(countdownDoc, name + " has correctly answered the question.");
+			    countdownDoc.scores.set(senderId, countdownDoc.scores.get(senderId) + 1);
+			    countdownDoc.save(function (err, res) {if (err) console.log(err); } );
+			    incrementAllParticipantProblemIndexes(countdownDoc);
+			    endGameSequence(countdownDoc, userDoc.current_problem);
+			} else {
+			    ftw.sendMessage(senderId, {text: "Wrong. Please try it again."});
+			}
+		  }
+	     });
+      	}
+   });
 }
  

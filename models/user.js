@@ -5,6 +5,7 @@ var UserSchema = new Schema({
     user_id: {type: String, unique: true},
     p_id: Number,
     game_id: Number,
+    current_problem: Number,
     unix: Number,
     count: Number,
     correct: Number,
