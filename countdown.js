@@ -45,19 +45,12 @@ function startCountdown(senderId, name, size) {
     joinCountdown(senderId, gameId);
 }
 
-function convertToStr(num) {
-    return num.toString(10); // convert number to base 10 string
-}
-
-function generateProblemSet(doc, num) {
-    for (int i = 0; i < num; i++) {
-	doc.problems.set(convertToStr(i), ftw.returnProblem());	
-    } 
-}
-
-// TODO: join if this thing has not launched
-function joinIfNotLaunched(gameId) {
-    
+function joinIfNotLaunched(senderId, gameId) {
+   Countdown.findById(gameId, function (err, doc) {
+	if (err) console.log(err)
+	else if (!doc.launched) joinCountdown(senderId)
+	else ftw.sendMessage(senderId, {text: "Game has already started."}); 
+   }); 
 }
 
 function joinCountdown(senderId, gameId) {
@@ -75,27 +68,67 @@ function joinCountdown(senderId, gameId) {
 	    doc.scores.set(senderId, 0);
 	    doc.currentSize++;
 	    if (doc.currentSize == doc.size) {
-		generateProblemSet(doc, 10);
+		ftw.populateProblemSet(doc);
 		doc.launched = true;
 	    } 
 	    doc.save(function (err, res) {
 		if (err) console.log(err);
 	    });
-	    sendProblem(doc);
+	    startNextGameSequence(doc);
 	}
     });
 }
 
-// make sure to check in models/User if user is part of countdown
-function sendProblem(doc) {
-    for (const val of doc.people.keys) {
-	// send problem to them
+function sendImage(senderId, problemDoc) {
+    if (problemDoc.image) {
+        ftw.sendMessage(senderId, {
+                    attachment: {
+                        type: "image",
+                        payload: {
+                            url: pObj['image'],
+                                is_reusable: true
+                            }
+                        }
+                    }, false);
     }
+}
+
+function sendImageToAllParticipants(doc, problemDoc) {
+    for (const senderId of doc.scores.keys) {
+	sendImage(senderId, problemDoc);
+    }
+}
+
+
+function sendMessageToAllParticipants(doc, text) {
+   for (const senderId of doc.score.keys()) {
+	ftw.sendMessage(senderId, {text: text})
+   }
+}
+
+// make sure to check in models/User if user is part of countdown
+function startNextGameSequence(doc) {
+    if (doc.problemIndex == 10) {
+	// sendMessage concluding problem cycle and listing results
+	return;
+    }
+    const currIndex = doc.problemIndex;
+    var problemDoc = doc.problems.get(currIndex.toString("10"));
+    sendMessageToAllParticipants(doc, problemDoc.text);
+    sendImageToAllParticipants(doc, problemDoc);
     setTimeout(function() {
-        //terminateIfNotAnswered()
+        endGameSequence(doc, currIndex);
     }, 15000); 
 }
 
-function updateMap(id, ) {
+// this starts next step by triggering the sending of the next problem
+function endGameSequence(doc, lastMeasuredIndex) {
+   if (lastMeasuredIndex == doc.problemIndex) {
+	sendMessageToAllParticipants(doc, "Problem period has ended.")
+        doc.problemIndex++;
+        doc.save(function (err, res) { if (err) console.log(err); } );
+   }
+   doc.save(function (err, res) { if (err) console.log(err); } );
+   setTimeout(function() { startNextGameSequence(doc) }, 2000)
 }
  

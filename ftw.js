@@ -7,7 +7,22 @@ var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUn
 var User = require('./models/user');
 var Problem = require('./models/problem');
 
-function returnProblem () {
+function getShuffledArray(size, slice) {
+    var array = []
+    for (int i = 0; i < size; i++) array[i] = i;
+    var tmp, current, top = array.length;
+    if(top) while(--top) {
+        current = Math.floor(Math.random() * (top + 1));
+        tmp = array[current];
+        array[current] = array[top];
+        array[top] = tmp;
+    }
+    var result = []
+    for (int i = 0; i < slice; i++) result[i] = array[i];
+    return result;
+}
+
+function populateProblemSet (countdownDoc) {
     var cnt = Problem.count();
     cnt.exec(function(err, res) {
         if (err)
@@ -15,21 +30,19 @@ function returnProblem () {
         else {
             if (!res) {
 		console.log("No problems found");
-                return undefined;
             }
-            var rand = Math.floor(Math.random() * res);
+            var randArray = getShuffledArray(res, 10);
 
-            var pQ = Problem.findOne({p_id: rand}).select({statement: 1, image: 1, _id: 0}).lean();
-            pQ.exec(function(errP, pObj) {
-                if (errP)
-                    console.log(errP);
-                else {
-		    return pObj;
-                }
-            });
+            Problem.find({'_id': {$in: randArray}, function (err, docs) {
+	 	var index = 0;
+		for (const doc of docs) {
+		     countdownDoc.problems.set(index.toString(10), doc);
+		     index++;
+		}
+		countdownDoc.save(function (err, props) { if(err) console.log(err); });
+	    });
         }
     });
-    return undefined;
 }
 
 function getProblem (senderId) {
@@ -172,7 +185,7 @@ function sendMessage (recipientId, message, flag = false) {
 }
 
 module.exports = {
-    returnProblem,
+    populateProblemSet,
     getProblem,
     getAnswer,
     getStats,
