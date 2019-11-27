@@ -59,7 +59,7 @@ function sendImage(senderId, problemDoc) {
                     attachment: {
                         type: "image",
                         payload: {
-                            url: pObj['image'],
+                            url: problemDoc['image'],
                                 is_reusable: true
                             }
                         }
@@ -89,7 +89,7 @@ function startNextGameSequence(doc) {
     }
     const currIndex = doc.problemIndex;
     var problemDoc = doc.problems.get(currIndex.toString(10));
-    sendMessageToAllParticipants(doc, problemDoc.text);
+    sendMessageToAllParticipants(doc, problemDoc.statement);
     sendImageToAllParticipants(doc, problemDoc);
     setTimeout(function() {
         endGameSequence(doc, currIndex);
@@ -103,9 +103,11 @@ function endGameSequence(oldDoc, lastMeasuredIndex) {
    	if (lastMeasuredIndex == doc.problemIndex) {
 	    sendMessageToAllParticipants(doc, "Problem period has ended.")
             doc.problemIndex++;
-            incrementAllParticipantProblemIndexes(countdownDoc);
-            doc.save(function (err, res) { if (err) console.log(err); } );
-            setTimeout(function() { startNextGameSequence(doc) }, 2000);
+            incrementAllParticipantProblemIndexes(doc);
+            doc.save(function (err, res) { 
+		if (err) console.log(err); 
+		setTimeout(function() { startNextGameSequence(doc) }, 2000);
+	    });
         }
    });
 }
@@ -117,7 +119,7 @@ function concludeGameSequence(doc) {
 	ftw.sendMessage(senderId, {text: "Here is your score: " + doc.scores.get(key)});
 	User.findOne({user_id: senderId}, function (err, doc) {
 	    doc.game_id = 0;
-	    doc.save(function (err, product) {if (err) console.log(err); } );
+	    doc.save(function (err, product) { if (err) console.log(err); } );
 	});
    }
 }
