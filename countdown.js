@@ -112,7 +112,7 @@ function endGameSequence(oldDoc, lastMeasuredIndex) {
 
 function concludeGameSequence(doc) {
    sendMessageToAllParticipants(doc, {text: "Game has ended"});
-   Countdown.deleteOne({doc._id}, function (err) { if(err) console.log(err); });
+   Countdown.deleteOne({_id: doc._id}, function (err) { if(err) console.log(err); });
    for (const senderId of doc.scores.keys) {
 	ftw.sendMessage(senderId, {text: "Here is your score: " + doc.scores.get(key)});
 	User.findOne({user_id: senderId}, function (err, doc) {
