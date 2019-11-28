@@ -166,9 +166,9 @@ function grabAllCountdownMatches(senderId) {
     });
 }
 
-module.exports = [
+module.exports = {
     answerQuestion,
     grabAllCountdownMatches,
     joinIfNotLaunched,
     startCountdown
-] 
+}
