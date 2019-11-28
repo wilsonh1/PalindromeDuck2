@@ -28,7 +28,8 @@ function joinIfNotLaunched(senderId, gameId) {
 }
 
 function joinCountdown(senderId, gameId) {
-    User.updateOne({user_id: senderId}, {game_id: id, current_problem: 0}, {upsert: true}, function (err, res) {
+    console.log("Joining game " + gameId);
+    User.updateOne({user_id: senderId}, {game_id: gameId, current_problem: 0}, {upsert: true}, function (err, res) {
     	if (err) {
 	    console.log(err);
 	} else {
