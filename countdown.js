@@ -5,7 +5,7 @@ var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUn
 var Schema = mongoose.Schema;
 const ftw = require('./ftw');
 const User = require('./models/user'); 
-const Countdown  = require('./models/Countdown')
+const Countdown  = require('./models/Countdown');
 
 function startCountdown(senderId, size) {
     const id = new Date().getTime() // take advantage of the fact that time is monotonically increasing to generate id
@@ -14,7 +14,7 @@ function startCountdown(senderId, size) {
 	    console.log(err);
 	} else {
 	    console.log("Successfully created game with id: " + id);
-            joinIfNotLaunched(senderId, gameId);
+            joinIfNotLaunched(senderId, id);
         }
     });
 }
