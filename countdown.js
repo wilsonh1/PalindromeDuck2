@@ -22,7 +22,7 @@ function startCountdown(senderId, size) {
 function joinIfNotLaunched(senderId, gameId) {
    Countdown.findById(gameId, function (err, doc) {
 	if (err) console.log(err)
-	else if (!doc.launched) joinCountdown(senderId)
+	else if (!doc.launched) joinCountdown(senderId, gameId)
 	else ftw.sendMessage(senderId, {text: "Game has already started."}); 
    }); 
 }
