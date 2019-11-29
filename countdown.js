@@ -104,20 +104,21 @@ function getAllParticipants(doc, callback) {
 	console.log("Finding partipants for game: " + doc._id);
 	if (docs) {
 	    for (var index = 0; index < docs.length; index++) {
-	        callback(docs[index]);
+	        console.log("Calling callback for doc: " + docs[index]);
+		callback(docs[index]);
 	    }
 	}
     });
 }
 
 function sendImageToAllParticipants(doc, problemDoc) {
-    function sendImage(senderDoc) { sendImage(senderDoc.user_id, problemDoc); }
+    function sendImage(senderDoc) { if (senderDoc) sendImage(senderDoc.user_id, problemDoc); }
     getAllParticipants(doc, sendImage);
 }
 
 
 function sendMessageToAllParticipants(doc, text) {
-    function sendMessage(senderDoc) { ftw.sendMessage(senderDoc.user_id, {text: text}); }
+    function sendMessage(senderDoc) { if (senderDoc) ftw.sendMessage(senderDoc.user_id, {text: text}); }
     getAllParticipants(doc, sendMessage);
 }
 
