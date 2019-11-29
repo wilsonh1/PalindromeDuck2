@@ -31,16 +31,14 @@ function populateProblemSet (countdownDoc) {
             if (!res) {
 		console.log("No problems found");
             }
-            /*var randArray = getShuffledArray(res, 10);
-
+            var randArray = getShuffledArray(res, 1); // temporarily set it to size one
+	    console.log("Adding problems: " + randArray);
             Problem.find({'_id': {$in: randArray}}, function (err, docs) {
-	 	var index = 0;
-		for (const doc of docs) {
-		     countdownDoc.problems.set(index.toString(10), doc);
-		     index++;
+		for (var index = 0; index < docs.length; index++) {
+		     countdownDoc.problems.set(index.toString(10), docs[index]);
 		}
 		countdownDoc.save(function (err, props) { if(err) console.log(err); });
-	    });*/
+	    });
             // currently, this does nothing
         }
     });
