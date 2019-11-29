@@ -28,6 +28,7 @@ function populateProblemSet (countdownDoc) {
         if (err)
             console.log(err);
         else {
+	    console.log("Number of problems found: " + res);
             if (!res) {
 		console.log("No problems found");
             }
@@ -44,7 +45,6 @@ function populateProblemSet (countdownDoc) {
 		}
 		countdownDoc.save(function (err, props) { if(err) console.log(err); });
 	    });
-            // currently, this does nothing
         }
     });
 }
