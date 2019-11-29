@@ -55,6 +55,29 @@ function joinCountdown(senderId, gameId) {
     });
 }
 
+function leaveCountdown(senderId) {
+    console.log("Leaving game");
+    User.findOne({user_id: sender_id}, function (err, doc){
+	if (err) console.log(err);
+	else {
+	    console.log("Leaving game " + doc.game_id);
+	    Countdown.findById(doc.game_id, function (err, countdownDoc){
+		countdownDoc.scores.delete(senderId);
+		countdownDoc.currentSize--;
+		countdownDoc.save(function (err, res) {
+		    doc.game_id = 0;
+		    doc.save(function (err, res) {
+			if (err) console.log(err);
+			else {
+			    ftw.sendMessage(senderId, {text: "Successfully left game"});
+			}
+		    });
+		});
+	    });
+	}
+    });
+}
+ 
 function sendImage(senderId, problemDoc) {
     if (problemDoc.image) {
         ftw.sendMessage(senderId, {
@@ -172,5 +195,6 @@ module.exports = {
     answerQuestion,
     grabAllCountdownMatches,
     joinIfNotLaunched,
-    startCountdown
+    startCountdown,
+    leaveCountdown
 }
