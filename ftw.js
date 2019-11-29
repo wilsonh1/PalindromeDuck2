@@ -31,7 +31,7 @@ function populateProblemSet (countdownDoc) {
             if (!res) {
 		console.log("No problems found");
             }
-            var randArray = getShuffledArray(res, 10);
+            /*var randArray = getShuffledArray(res, 10);
 
             Problem.find({'_id': {$in: randArray}}, function (err, docs) {
 	 	var index = 0;
@@ -40,7 +40,8 @@ function populateProblemSet (countdownDoc) {
 		     index++;
 		}
 		countdownDoc.save(function (err, props) { if(err) console.log(err); });
-	    });
+	    });*/
+            // currently, this does nothing
         }
     });
 }
