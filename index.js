@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 var Leaderboard = require('./models/leaderboard');
 var Palindrome = require('./models/palindrome');
-var User = requuire('./models/user');
+var User = require('./models/user');
 
 const ftw = require('./ftw');
 const countdown = require('./countdown');
