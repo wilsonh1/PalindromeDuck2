@@ -60,7 +60,7 @@ function leaveCountdown(senderId) {
     console.log("Leaving game");
     User.findOne({user_id: senderId}, function (err, doc){
 	if (err) console.log(err);
-	else {
+	else if (dloc.game_id != 0) {
 	    console.log("Leaving game " + doc.game_id);
 	    Countdown.findById(doc.game_id, function (err, countdownDoc){
 		console.log("Deleting from doc: " + doc);
@@ -76,6 +76,8 @@ function leaveCountdown(senderId) {
 		    });
 		});
 	    });
+	} else {
+	    ftw.sendMessage(senderId, {text: "Not able to leave game since not in game."});
 	}
     });
 }
