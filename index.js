@@ -104,6 +104,7 @@ function processMessage (event) {
 		problem.addProblem(arr[1], arr[2], arr[3]); // for now, don't add image url
 	    } else if (str.split(' ')[0] == "!") {
 		User.findOne({user_id: senderId}, function (err, doc) {
+	            console.log("The player is currently in game: " + doc.game_id);
                     if (doc.gameId != 0) {
 			countdown.answerQuestion(senderId, doc.gameId, str.split(' ')[1])
 		    } else {

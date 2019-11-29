@@ -38,6 +38,7 @@ function joinCountdown(senderId, gameId) {
 	        if (err) {
 	    	    console.log(err);
 		} else {
+		    console.log("Added successfully to doc: " + doc);
 	    	    doc.scores.set(senderId, 0);
 	    	    doc.currentSize++;
 	    	    if (doc.currentSize == doc.size) {
@@ -62,6 +63,7 @@ function leaveCountdown(senderId) {
 	else {
 	    console.log("Leaving game " + doc.game_id);
 	    Countdown.findById(doc.game_id, function (err, countdownDoc){
+		console.log("Deleting from doc: " + doc);
 		countdownDoc.scores.delete(senderId);
 		countdownDoc.currentSize--;
 		countdownDoc.save(function (err, res) {
@@ -189,6 +191,20 @@ function grabAllCountdownMatches(senderId) {
 	    ftw.sendMessage(senderId, {text: doc._id});
 	}
     });
+}
+
+function grabPeopleInGame(senderId) {
+    User.findOne({user_id: senderId}, function (err, userDoc) {
+        if (err) console.log(err);
+        else {
+             Countdown.findById(userDoc.game_id, function (err, countdownDoc) {
+                  if (err) console.log(err);
+                  else {
+			
+                  }
+             });
+        }
+   });
 }
 
 module.exports = {
