@@ -66,18 +66,29 @@ function leaveCountdown(senderId) {
 	else if (doc.game_id != 0) {
 	    console.log("Leaving game " + doc.game_id);
 	    Countdown.findById(doc.game_id, function (err, countdownDoc){
-		console.log("Deleting from doc: " + doc);
-		countdownDoc.scores.delete(senderId);
-		countdownDoc.currentSize--;
-		countdownDoc.save(function (err, res) {
+		if (err) console.log(err);
+		else if (countdownDoc) {
+		    console.log("Deleting from doc: " + doc);
+		    countdownDoc.scores.delete(senderId);
+		    countdownDoc.currentSize--;
+		    countdownDoc.save(function (err, res) {
+		    	doc.game_id = 0;
+		    	doc.save(function (err, res) {
+			    if (err) console.log(err);
+			    else {
+			    	ftw.sendMessage(senderId, {text: "Successfully left game"});
+			    }
+		    	});
+		    });
+		} else {
 		    doc.game_id = 0;
 		    doc.save(function (err, res) {
-			if (err) console.log(err);
-			else {
-			    ftw.sendMessage(senderId, {text: "Successfully left game"});
-			}
-		    });
-		});
+                        if (err) console.log(err);
+                        else {
+                            ftw.sendMessage(senderId, {text: "Successfully left game"});
+                        }
+                    });
+		}
 	    });
 	} else {
 	    ftw.sendMessage(senderId, {text: "Not able to leave game since not in game."});
@@ -99,7 +110,7 @@ function sendImage(senderId, problemDoc) {
     }
 }
 
-function getAllParticipants(doc, callback) {
+function getAllParticipants(doc, callback, finalCallback = undefined) {
     User.find({game_id: doc._id}, function (err, docs) {
 	console.log("Finding partipants for game: " + doc._id);
 	if (docs) {
@@ -107,6 +118,7 @@ function getAllParticipants(doc, callback) {
 	        console.log("Calling callback for doc: " + docs[index]);
 		callback(docs[index]);
 	    }
+	    if (finalCallback) finalCallback(doc);
 	}
     });
 }
@@ -156,7 +168,8 @@ function endGameSequence(oldDoc, lastMeasuredIndex) {
 
 function concludeGameSequence(doc) {
     sendMessageToAllParticipants(doc, {text: "Game has ended"});
-    Countdown.deleteOne({_id: doc._id}, function (err) { if(err) console.log(err); });
+
+    function deleteRound(doc) { Countdown.deleteOne({_id: doc._id}, function (err) { if(err) console.log(err); }); }
    
     function wrapup(senderDoc) {
 	if (senderDoc) {
@@ -165,7 +178,7 @@ function concludeGameSequence(doc) {
 	    senderDoc.save(function (err, product) { if (err) console.log(err); });
 	}
     }
-    getAllParticipants(doc, wrapup);  
+    getAllParticipants(doc, wrapup, deleteRound);  
 }
 
 function incrementAllParticipantProblemIndexes(doc) {
