@@ -12,7 +12,8 @@ var Leaderboard = require('./models/leaderboard');
 var Palindrome = require('./models/palindrome');
 
 const ftw = require('./ftw');
-const countdown = require('./countdown')
+const countdown = require('./countdown');
+const problem = require('./add_problem');
 
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
@@ -97,7 +98,10 @@ function processMessage (event) {
                 getLeader(senderId, "behind");
             else if (str == "ftw")
                 ftw.getProblem(senderId);
-            else if (str.split(' ')[0] == "!") {
+	    else if (str.split(' ')[0] == "add") {
+		const arr = str.split(' ');
+		problem.addProblem(arr[0], arr[1], arr[2]); // for now, don't add image url
+	    } else if (str.split(' ')[0] == "!") {
 		User.findOne({user_id: senderId}, function (err, doc) {
                     if (doc.gameId != 0) {
 			countdown.answerQuestion(senderId, doc.gameId, str.split(' ')[1])
