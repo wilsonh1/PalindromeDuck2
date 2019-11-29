@@ -37,11 +37,9 @@ function populateProblemSet (countdownDoc) {
             Problem.find({'p_id': {$in: randArray}}, function (err, docs) {
 		console.log("docs found: " + docs);
 		if (docs) {
-		    var index = 0;
-		    docs.foreach(function (doc) {
-		    	countdownDoc.problems.set(index.toString(10), doc);
-			index++;
-		    });
+		    for (var index = 0; index < docs.length; index++) {
+		    	countdownDoc.problems.set(index.toString(10), docs[index]);
+		    }
 		}
 		countdownDoc.save(function (err, props) { if(err) console.log(err); });
 	    });
