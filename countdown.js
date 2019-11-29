@@ -46,7 +46,7 @@ function joinCountdown(senderId, gameId) {
 	    	    } 
 	    	    doc.save(function (err, res) {
 		        if (err) console.log(err);
-			else console.log("Successfully saved doc, beginning game.");
+			else console.log("Successfully saved doc, beginning game: " + (doc.currentSize == doc.size));
 	    	        if (doc.currentSize == doc.size) startNextGameSequence(doc);
 	    	    });
 	        }
