@@ -5,7 +5,7 @@ var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUn
 var Problem = require('./models/problem');
 
 function addProblem(problem_id, statement_1, answer_1, image_1 = undefined) {
-    Problem.updateOne({p_id: problem_id}, {statement: statement_1, answer: answer_1, image: image_1}, {upsert: true}, function(errU, docsU) {
+    Problem.updateOne({p_id: parseInt(problem_id)}, {statement: statement_1, answer: answer_1, image: image_1}, {upsert: true}, function(errU, docsU) {
         if (errU)
             console.log(errU);
         else
