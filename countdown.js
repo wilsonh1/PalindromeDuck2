@@ -99,17 +99,26 @@ function sendImage(senderId, problemDoc) {
     }
 }
 
+function getAllParticipants(doc, callback) {
+    User.find({game_id: doc._id}, function (err, docs) {
+	console.log("Finding partipants for game: " + doc._id);
+	if (docs) {
+	    for (var index = 0; index < docs.length; index++) {
+	        callback(docs[index]);
+	    }
+	}
+    });
+}
+
 function sendImageToAllParticipants(doc, problemDoc) {
-    for (const senderId of doc.scores.keys) {
-	sendImage(senderId, problemDoc);
-    }
+    function sendImage(senderDoc) { sendImage(senderDoc.user_id, problemDoc); }
+    getAllParticipants(doc, sendImage);
 }
 
 
 function sendMessageToAllParticipants(doc, text) {
-   for (const senderId of doc.scores.keys()) {
-	ftw.sendMessage(senderId, {text: text})
-   }
+    function sendMessage(senderDoc) { ftw.sendMessage(senderDoc.user_id, {text: text}); }
+    getAllParticipants(doc, sendMessage);
 }
 
 // make sure to check in models/User if user is part of countdown
