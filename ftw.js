@@ -34,8 +34,13 @@ function populateProblemSet (countdownDoc) {
             var randArray = getShuffledArray(res, 1); // temporarily set it to size one
 	    console.log("Adding problems: " + randArray);
             Problem.find({'_id': {$in: randArray}}, function (err, docs) {
-		for (var index = 0; index < docs.length; index++) {
-		     countdownDoc.problems.set(index.toString(10), docs[index]);
+		console.log("docs found: " + docs);
+		if (docs) {
+		    var index = 0;
+		    docs.foreach(function (doc) {
+		    	countdownDoc.problems.set(index.toString(10), doc);
+			index++;
+		    });
 		}
 		countdownDoc.save(function (err, props) { if(err) console.log(err); });
 	    });
