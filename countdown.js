@@ -193,20 +193,6 @@ function grabAllCountdownMatches(senderId) {
     });
 }
 
-function grabPeopleInGame(senderId) {
-    User.findOne({user_id: senderId}, function (err, userDoc) {
-        if (err) console.log(err);
-        else {
-             Countdown.findById(userDoc.game_id, function (err, countdownDoc) {
-                  if (err) console.log(err);
-                  else {
-			
-                  }
-             });
-        }
-   });
-}
-
 module.exports = {
     answerQuestion,
     grabAllCountdownMatches,
