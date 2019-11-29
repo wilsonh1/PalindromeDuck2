@@ -155,24 +155,25 @@ function endGameSequence(oldDoc, lastMeasuredIndex) {
 }
 
 function concludeGameSequence(doc) {
-   sendMessageToAllParticipants(doc, {text: "Game has ended"});
-   Countdown.deleteOne({_id: doc._id}, function (err) { if(err) console.log(err); });
-   for (const senderId of doc.scores.keys) {
-	ftw.sendMessage(senderId, {text: "Here is your score: " + doc.scores.get(key)});
-	User.findOne({user_id: senderId}, function (err, doc) {
-	    doc.game_id = 0;
-	    doc.save(function (err, product) { if (err) console.log(err); } );
-	});
-   }
+    sendMessageToAllParticipants(doc, {text: "Game has ended"});
+    Countdown.deleteOne({_id: doc._id}, function (err) { if(err) console.log(err); });
+   
+    function wrapup(senderDoc) {
+	if (senderDoc) {
+	    ftw.sendMessage(senderDoc.user_id, {text: "Here is your score: " + doc.scores.get(key)});
+	    senderDoc.game_id = 0;
+	    senderDoc.save(function (err, product) { if (err) console.log(err); });
+	}
+    }
+    getAllParticipants(doc, wrapup);  
 }
 
 function incrementAllParticipantProblemIndexes(doc) {
-    for (const senderId of doc.scores.keys) {
-    	User.findOne({user_id: senderId}, function (err, userDoc) {
-	    userDoc.current_problem++;
-	    userDoc.save(function (err, props) {if (err) console.log(err); });
-	});	
+    function incrementIndex (userDoc) { 
+	userDoc.current_problem++;
+	userDoc.save(function (err, props) { if (err) console.log(err); });
     }
+    getAllParticipants(doc, incrementIndex); 
 }
 
 // index.js will check if sender is in game
@@ -187,8 +188,10 @@ function answerQuestion(senderId, gameId, answer) {
 			if (index == countdownDoc.problemIndex && countdownDoc.problems.get(userDoc.current_problem.toString(10)).answer == answer) {
 		  	    sendMessageToAllParticipants(countdownDoc, "Someone has correctly answered the question.");
 			    countdownDoc.scores.set(senderId, countdownDoc.scores.get(senderId) + 1);
-			    countdownDoc.save(function (err, res) {if (err) console.log(err); } );
-			    endGameSequence(countdownDoc, userDoc.current_problem);
+			    countdownDoc.save(function (err, res) {
+				if (err) console.log(err); 
+				else endGameSequence(countdownDoc, userDoc.current_problem);
+			    });
 			} else {
 			    ftw.sendMessage(senderId, {text: "Wrong. Please try it again."});
 			}
