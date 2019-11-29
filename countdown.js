@@ -154,7 +154,7 @@ function startNextGameSequence(doc) {
 function endGameSequence(oldDoc, lastMeasuredIndex) {
    // we want to find the updated version of the doc, just in case it was overwritten by another process
    Countdown.findById(oldDoc._id, function (err, doc){
-   	if (lastMeasuredIndex == doc.problemIndex) {
+   	if (doc && lastMeasuredIndex == doc.problemIndex) {
 	    sendMessageToAllParticipants(doc, "Problem period has ended.")
             doc.problemIndex++;
             incrementAllParticipantProblemIndexes(doc);
