@@ -113,7 +113,7 @@ function processMessage (event) {
             } else if (str == "stats")
                 ftw.getStats(senderId);
 	    else if (str == "leave")
-		ftw.leaveCountdown(senderId);
+		countdown.leaveCountdown(senderId);
             else if (str == "reset")
                 ftw.resetStats(senderId);
 	    else if (str.split(' ')[0] == "countdown")
