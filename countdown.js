@@ -57,7 +57,7 @@ function joinCountdown(senderId, gameId) {
 
 function leaveCountdown(senderId) {
     console.log("Leaving game");
-    User.findOne({user_id: sender_id}, function (err, doc){
+    User.findOne({user_id: senderId}, function (err, doc){
 	if (err) console.log(err);
 	else {
 	    console.log("Leaving game " + doc.game_id);
