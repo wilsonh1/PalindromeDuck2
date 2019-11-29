@@ -173,9 +173,8 @@ function concludeGameSequence(doc) {
    
     function wrapup(senderDoc) {
 	if (senderDoc) {
-	    ftw.sendMessage(senderDoc.user_id, {text: "Here is your score: " + doc.scores.get(key)});
-	    senderDoc.game_id = 0;
-	    senderDoc.save(function (err, product) { if (err) console.log(err); });
+	    ftw.sendMessage(senderDoc.user_id, {text: "Here is your score: " + doc.scores.get(senderDoc.user_id)});
+	    leaveCountdown(senderDoc.user_id);
 	}
     }
     getAllParticipants(doc, wrapup, deleteRound);  
