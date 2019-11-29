@@ -100,7 +100,7 @@ function processMessage (event) {
                 ftw.getProblem(senderId);
 	    else if (str.split(' ')[0] == "add") {
 		const arr = str.split(' ');
-		problem.addProblem(arr[0], arr[1], arr[2]); // for now, don't add image url
+		problem.addProblem(arr[1], arr[2], arr[3]); // for now, don't add image url
 	    } else if (str.split(' ')[0] == "!") {
 		User.findOne({user_id: senderId}, function (err, doc) {
                     if (doc.gameId != 0) {
