@@ -105,8 +105,8 @@ function processMessage (event) {
 	    } else if (str.split(' ')[0] == "!") {
 		User.findOne({user_id: senderId}, function (err, doc) {
 	            console.log("The player is currently in game: " + doc.game_id);
-                    if (doc.gameId != 0) {
-			countdown.answerQuestion(senderId, doc.gameId, str.split(' ')[1])
+                    if (doc.game_id != 0) {
+			countdown.answerQuestion(senderId, doc.game_id, str.split(' ')[1])
 		    } else {
 			ftw.getAnswer(senderId, str.split(' ')[1], sent);
 		    }
