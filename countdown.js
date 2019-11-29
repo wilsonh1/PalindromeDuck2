@@ -223,10 +223,23 @@ function grabAllCountdownMatches(senderId) {
     });
 }
 
+function grabAllParticipants(senderId, gameId, retrieveName) {
+    function sendName(user, name) {
+    	ftw.sendMessage(senderId, {text: name});
+    }
+    function wrappedCallback (userDoc) { retrieveName(senderId, sendName); }
+    
+    ftw.sendMessage(senderId, {text: "Here are people in game: "});
+    Countdown.findById(gameId, function (err, doc) {
+    	getAllParticipants(doc, wrappedCallback);
+    });
+}
+
 module.exports = {
     answerQuestion,
     grabAllCountdownMatches,
     joinIfNotLaunched,
     startCountdown,
-    leaveCountdown
+    leaveCountdown,
+    grabAllParticipants
 }

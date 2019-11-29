@@ -113,6 +113,8 @@ function processMessage (event) {
 		}); 
             } else if (str == "stats")
                 ftw.getStats(senderId);
+	    else if (str.split(' ')[0] == "people")
+		countdown.grabAllParticipants(senderId, parseInt(str.split(' ')[1]), callName);
 	    else if (str == "leave")
 		countdown.leaveCountdown(senderId);
             else if (str == "reset")
@@ -232,14 +234,14 @@ function updateLeader (senderId, val) {
             console.log("Error incrementing: " + errU);
         else if (docsU.upserted) {
             console.log("Created leaderboard: " + senderId);
-            setName(senderId);
+            callName(senderId, updateLeaderboardCallback);
         }
         else
             console.log("Incremented: " + senderId + " " + val);
     });
 }
 
-function setName (senderId) {
+function callName (senderId, callback) {
     request({
         url: "https://graph.facebook.com/v4.0/" + senderId,
         qs: {
@@ -253,13 +255,17 @@ function setName (senderId) {
         else {
             var bodyObj = JSON.parse(body);
             var name = bodyObj.name;
-            Leaderboard.updateOne({user_id: senderId}, {name: name}, function(errU, docsU) {
-                if (errU)
-                    console.log("Error setting name: " + errU);
-                else
-                    console.log("Name " + senderId + " set to " + name);
-            });
+	    callback(senderId, name);
         }
+    });
+}
+
+function updateLeaderboardCallback(senderId, name) {
+    Leaderboard.updateOne({user_id: senderId}, {name: name}, function(errU, docsU) {
+    	if (errU)
+            console.log("Error setting name: " + errU);
+        else
+            console.log("Name " + senderId + " set to " + name);
     });
 }
 
