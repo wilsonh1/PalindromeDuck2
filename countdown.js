@@ -42,17 +42,20 @@ function joinCountdown(senderId, gameId) {
 	    	    doc.scores.set(senderId, 0);
 	    	    doc.currentSize++;
 	    	    if (doc.currentSize == doc.size) {
-			ftw.populateProblemSet(doc);
 			doc.launched = true;
+			ftw.populateProblemSet(doc, triggerCountdownSeq);
 	    	    } 
-	    	    doc.save(function (err, res) {
-		        if (err) console.log(err);
-			else console.log("Successfully saved doc, beginning game: " + (doc.currentSize == doc.size));
-	    	        if (doc.currentSize == doc.size) startNextGameSequence(doc);
-	    	    });
 	        }
     	    });
 	}
+    });
+}
+
+function triggerCountdownSeq(doc) {
+    doc.save(function (err, res) {
+    	if (err) console.log(err);
+        else console.log("Successfully saved doc, beginning game: " + (doc.currentSize == doc.size));
+        if (doc.currentSize == doc.size) startNextGameSequence(doc);
     });
 }
 

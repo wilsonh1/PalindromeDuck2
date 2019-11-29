@@ -22,7 +22,7 @@ function getShuffledArray(size, slice) {
     return result;
 }
 
-function populateProblemSet (countdownDoc) {
+function populateProblemSet (countdownDoc, triggerCountdownSeq) {
     var cnt = Problem.count();
     cnt.exec(function(err, res) {
         if (err)
@@ -41,7 +41,10 @@ function populateProblemSet (countdownDoc) {
 		    	countdownDoc.problems.set(index.toString(10), docs[index]);
 		    }
 		}
-		countdownDoc.save(function (err, props) { if(err) console.log(err); });
+		countdownDoc.save(function (err, props) { 
+		    if(err) console.log(err); 
+		    triggerCountdownSeq(countdownDoc);
+		});
 	    });
         }
     });
