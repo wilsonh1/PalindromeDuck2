@@ -107,14 +107,14 @@ function sendImageToAllParticipants(doc, problemDoc) {
 
 
 function sendMessageToAllParticipants(doc, text) {
-   for (const senderId of doc.score.keys()) {
+   for (const senderId of doc.scores.keys()) {
 	ftw.sendMessage(senderId, {text: text})
    }
 }
 
 // make sure to check in models/User if user is part of countdown
 function startNextGameSequence(doc) {
-    if (doc.problemIndex == 10) {
+    if (doc.problemIndex == 1) {
 	// sendMessage concluding problem cycle and listing result
 	concludeGameSequence(doc);
 	return;
