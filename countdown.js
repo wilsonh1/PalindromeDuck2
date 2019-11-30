@@ -232,7 +232,7 @@ function grabAllParticipants(senderId, gameId, retrieveName) {
     
     ftw.sendMessage(senderId, {text: "Here are people in game: "});
     Countdown.findById(gameId, function (err, doc) {
-    	getAllParticipants(doc, wrappedCallback);
+    	if (doc) getAllParticipants(doc, wrappedCallback);
     });
 }
 
