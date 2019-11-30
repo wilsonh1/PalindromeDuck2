@@ -212,7 +212,7 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 			if (index == countdownDoc.problemIndex && countdownDoc.problems.get(userDoc.current_problem.toString(10)).answer == answer) {
 		  	    sendMessageToAllParticipants(countdownDoc, "Someone has correctly answered the question.");
 			    function getQuestion() {
-			        Question.find({senderId: senderId, gameId: gameId, problemIndex: index}, function (err, product) {
+			        Question.findOne({senderId: senderId, gameId: gameId, problemIndex: index}, function (err, product) {
 			            if (err) {
 				         console.log(err);
 				    	return;
