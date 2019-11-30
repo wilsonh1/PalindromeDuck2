@@ -137,6 +137,7 @@ function sendImageToAllParticipants(doc, problemDoc) {
 function sendMessageToAllParticipants(doc, text) {
     function sendMessage(senderDoc) { 
 	function createQuestion(time) {
+	    console.log("Time's value is: " + time);
 	    Question.create({timestamp: time, gameId: doc._id, problemIndex: senderDoc.problemIndex, senderId: senderDoc.user_id},
 			    function (err, res) { if (err) console.log(err); });
 	}

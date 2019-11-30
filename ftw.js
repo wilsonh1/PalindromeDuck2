@@ -179,12 +179,12 @@ function sendMessage (recipientId, message, flag = false, callback = undefined) 
             console.log("Error sending messages: " + err);
         else if (flag) {
             var date = new Date().getTime();
+	    if (callback) callback(date);
             User.updateOne({user_id: recipientId}, {unix: date}, function(errT, docsT) {
                 if (errT)
                     console.log(errT);
                 else {
                     console.log("Set time: " + recipientId + " " + date); 
-		    callback(date);
 		}
             });
         }
