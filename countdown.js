@@ -45,7 +45,9 @@ function joinCountdown(senderId, gameId) {
 	    	    if (doc.currentSize == doc.size) {
 			doc.launched = true;
 			ftw.populateProblemSet(doc, triggerCountdownSeq);
-	    	    }
+	    	    } else {
+			doc.save(function (err, res) {if (err) console.log(err); });
+		    }
 		    ftw.sendMessage(senderId, {text: "You have been added to game " + gameId});
 	        }
     	    });
