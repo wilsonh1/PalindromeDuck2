@@ -219,7 +219,7 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 				    }
 				    if (!product || (!product.timestamp)) {
 					console.log("In here: " + product);
-					setTimeout(getQuestion, 200);
+					//setTimeout(getQuestion, 200);
 					return;
 				    }
 			 	    console.log("Here is the doc found for question: " + product);
