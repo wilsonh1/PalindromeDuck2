@@ -4,7 +4,7 @@ var Schema = mongoose.Schema
 var AnswerSchema = new Schema ({
    timestamp: Number,
    gameId: Number,
-   senderId: Number,
+   senderId: String,
    problemIndex: Number
 });
 
