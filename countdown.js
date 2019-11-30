@@ -208,6 +208,8 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 	     Countdown.findById(gameId, function (err, countdownDoc) {
 		  if (err) console.log(err);
 	     	  else {
+			// round were deleted
+			if (!countdownDoc) return;
 			const index = userDoc.current_problem
 			if (index == countdownDoc.problemIndex && countdownDoc.problems.get(userDoc.current_problem.toString(10)).answer == answer) {
 		  	    sendMessageToAllParticipants(countdownDoc, "Someone has correctly answered the question.");
