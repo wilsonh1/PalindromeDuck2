@@ -211,38 +211,45 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 			const index = userDoc.current_problem
 			if (index == countdownDoc.problemIndex && countdownDoc.problems.get(userDoc.current_problem.toString(10)).answer == answer) {
 		  	    sendMessageToAllParticipants(countdownDoc, "Someone has correctly answered the question.");
-			    Question.find({senderId: senderId, gameId: gameId, problemIndex: index}, function (err, product) {
-			        if (err) {
-				    console.log(err);
-				    return;
-				}
-				console.log("Here is the doc found for question: " + product);
-				console.log("Timestamp " + product.timestamp + " and answered timestamp " + timestamp); 
-			        Answer.create({timestamp: timestamp - product.timestamp, senderId: senderId, gameId: gameId, problemIndex: index}, function (err, res) {
+			    function getQuestion() {
+			        Question.find({senderId: senderId, gameId: gameId, problemIndex: index}, function (err, product) {
 			            if (err) {
-				        console.log(err);
-				        return;
+				         console.log(err);
+				    	return;
 				    }
-				    setTimeout(function () {
-				        Answer.find({problemIndex: index, gameId: gameId}).sort({timestamp: 1}).limit(1).exec( function (err, docs) {
-					    if (err) {
-					    	console.log(err);
-					    	return;
-					    }
-					    console.log("Docs founds was: " + docs);
-					    if (!docs || !docs[0]) return;
-					    const user_id = docs[0].senderId;
-					    console.log("Have found: " + user_id);
-				    	    countdownDoc.scores.set(user_id, countdownDoc.scores.get(user_id) + 1);
-			                    countdownDoc.save(function (err, res) {
-				                if (err) console.log(err); 
-				                else endGameSequence(countdownDoc, userDoc.current_problem);
-			                    }); 
-					    Answer.deleteMany({problemIndex: index, gameId: gameId}, function (err) {if (err) console.log(err); });
-				        });
-				    }, 1000);
-			        });
-			    });
+				    if (!product) {
+					setTimeout(getQuestion, 200);
+					return;
+				    }
+			 	    console.log("Here is the doc found for question: " + product);
+				    console.log("Timestamp " + product.timestamp + " and answered timestamp " + timestamp); 
+			            Answer.create({timestamp: timestamp - product.timestamp, senderId: senderId, gameId: gameId, problemIndex: index}, function (err, res) {
+			                if (err) {
+				            console.log(err);
+				            return;
+				        }
+				        setTimeout(function () {
+				            Answer.find({problemIndex: index, gameId: gameId}).sort({timestamp: 1}).limit(1).exec( function (err, docs) {
+					        if (err) {
+					    	    console.log(err);
+					    	    return;
+					        }
+					        console.log("Docs founds was: " + docs);
+					        if (!docs || !docs[0]) return;
+					        const user_id = docs[0].senderId;
+					        console.log("Have found: " + user_id);
+				    	        countdownDoc.scores.set(user_id, countdownDoc.scores.get(user_id) + 1);
+			                        countdownDoc.save(function (err, res) {
+				                    if (err) console.log(err); 
+				                    else endGameSequence(countdownDoc, userDoc.current_problem);
+			                        }); 
+					        Answer.deleteMany({problemIndex: index, gameId: gameId}, function (err) {if (err) console.log(err); });
+				            });
+				       }, 1000);
+			          });
+			      });
+			 }
+			 getQuestion();
 			} else {
 			    ftw.sendMessage(senderId, {text: "Wrong. Please try it again."});
 			}
