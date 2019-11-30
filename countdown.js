@@ -136,7 +136,7 @@ function sendMessageToAllParticipants(doc, text) {
 
 // make sure to check in models/User if user is part of countdown
 function startNextGameSequence(doc) {
-    if (doc.problemIndex == 1) {
+    if (doc.problemIndex == 2) {
 	// sendMessage concluding problem cycle and listing result
 	concludeGameSequence(doc);
 	return;
