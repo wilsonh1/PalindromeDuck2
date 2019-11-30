@@ -181,7 +181,10 @@ function endGameSequence(oldDoc, lastMeasuredIndex) {
 function concludeGameSequence(doc) {
     sendMessageToAllParticipants(doc, {text: "Game has ended"});
 
-    function deleteRound(doc) { Countdown.deleteOne({_id: doc._id}, function (err) { if(err) console.log(err); }); }
+    function deleteRound(doc) { 
+	Countdown.deleteOne({_id: doc._id}, function (err) { if(err) console.log(err); }); 
+    	Question.deleteMany({gameId: doc._id}, function (err) { if (err) console.log(err); });
+    }
    
     function wrapup(senderDoc) {
 	if (senderDoc) {
@@ -220,7 +223,7 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 				    	return;
 				    }
 				    if (!product || (!product.timestamp)) {
-					setTimeout(getQuestion, 200);
+					console.log("Looks like question has been deleted.");
 					return;
 				    }
 			 	    console.log("Here is the doc found for question: " + product);
