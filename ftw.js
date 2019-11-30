@@ -179,6 +179,7 @@ function sendMessage (recipientId, message, flag = false, callback = undefined) 
             console.log("Error sending messages: " + err);
         else if (flag) {
             var date = new Date().getTime();
+	    console.log("Calling callback with date: " + date);
 	    if (callback) callback(date);
             User.updateOne({user_id: recipientId}, {unix: date}, function(errT, docsT) {
                 if (errT)
