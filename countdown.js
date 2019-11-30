@@ -213,7 +213,8 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 					    return;
 					}
 					if (!docs) return;
-					const user_id = docs[0].sender_id;
+					const user_id = docs[0].senderId;
+					console.log("Have found: " + user_id);
 				    	countdownDoc.scores.set(user_id, countdownDoc.scores.get(user_id) + 1);
 			                countdownDoc.save(function (err, res) {
 				            if (err) console.log(err); 
