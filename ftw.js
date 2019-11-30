@@ -164,7 +164,7 @@ function resetStats (senderId) {
     });
 }
 
-function sendMessage (recipientId, message, flag = false) {
+function sendMessage (recipientId, message, flag = false, callback = undefined) {
     console.log(message + " " + flag);
     request({
         url: "https://graph.facebook.com/v4.0/me/messages",
@@ -182,8 +182,10 @@ function sendMessage (recipientId, message, flag = false) {
             User.updateOne({user_id: recipientId}, {unix: date}, function(errT, docsT) {
                 if (errT)
                     console.log(errT);
-                else
-                    console.log("Set time: " + recipientId + " " + date);
+                else {
+                    console.log("Set time: " + recipientId + " " + date); 
+		    callback(date);
+		}
             });
         }
     });

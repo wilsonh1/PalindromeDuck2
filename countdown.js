@@ -7,6 +7,7 @@ const ftw = require('./ftw');
 const User = require('./models/user'); 
 const Countdown  = require('./models/Countdown');
 const Answer = require('./models/answer');
+const Question = require('./models/question');
 
 function startCountdown(senderId, size) {
     const id = new Date().getTime() // take advantage of the fact that time is monotonically increasing to generate id
@@ -134,7 +135,13 @@ function sendImageToAllParticipants(doc, problemDoc) {
 
 
 function sendMessageToAllParticipants(doc, text) {
-    function sendMessage(senderDoc) { if (senderDoc) ftw.sendMessage(senderDoc.user_id, {text: text}); }
+    function sendMessage(senderDoc) { 
+	function createQuestion(time) {
+	    Question.create({timestamp: time, gameId: doc._id, problemIndex: senderDoc.problemIndex, senderId: senderDoc.user_id},
+			    function (err, res) { if (err) console.log(err); });
+	}
+	if (senderDoc) ftw.sendMessage(senderDoc.user_id, {text: text}, false, createQuestion); 
+    }
     getAllParticipants(doc, sendMessage);
 }
 
@@ -203,29 +210,35 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 			const index = userDoc.current_problem
 			if (index == countdownDoc.problemIndex && countdownDoc.problems.get(userDoc.current_problem.toString(10)).answer == answer) {
 		  	    sendMessageToAllParticipants(countdownDoc, "Someone has correctly answered the question.");
-			    Answer.create({timestamp: timestamp, senderId: senderId, gameId: gameId, problemIndex: index}, function (err, res) {
+			    Question.find({senderId: senderId, gameId: gameId, problemIndex: index}, function (err, product) {
 			        if (err) {
 				    console.log(err);
 				    return;
-				}
-				setTimeout(function () {
-				    Answer.find({problemIndex: index, gameId: gameId}).sort({timestamp: 1}).limit(1).exec( function (err, docs) {
-					if (err) {
-					    console.log(err);
-					    return;
-					}
-					console.log("Docs founds was: " + docs);
-					if (!docs || !docs[0]) return;
-					const user_id = docs[0].senderId;
-					console.log("Have found: " + user_id);
-				    	countdownDoc.scores.set(user_id, countdownDoc.scores.get(user_id) + 1);
-			                countdownDoc.save(function (err, res) {
-				            if (err) console.log(err); 
-				            else endGameSequence(countdownDoc, userDoc.current_problem);
-			                }); 
-					Answer.deleteMany({problemIndex: index, gameId: gameId}, function (err) {if (err) console.log(err); });
-				    });
-				}, 1000);
+				} 
+			        Answer.create({timestamp: timestamp - product.timestamp, senderId: senderId, gameId: gameId, problemIndex: index}, function (err, res) {
+			            if (err) {
+				        console.log(err);
+				        return;
+				    }
+				    setTimeout(function () {
+				        Answer.find({problemIndex: index, gameId: gameId}).sort({timestamp: 1}).limit(1).exec( function (err, docs) {
+					    if (err) {
+					    	console.log(err);
+					    	return;
+					    }
+					    console.log("Docs founds was: " + docs);
+					    if (!docs || !docs[0]) return;
+					    const user_id = docs[0].senderId;
+					    console.log("Have found: " + user_id);
+				    	    countdownDoc.scores.set(user_id, countdownDoc.scores.get(user_id) + 1);
+			                    countdownDoc.save(function (err, res) {
+				                if (err) console.log(err); 
+				                else endGameSequence(countdownDoc, userDoc.current_problem);
+			                    }); 
+					    Answer.deleteMany({problemIndex: index, gameId: gameId}, function (err) {if (err) console.log(err); });
+				        });
+				    }, 1000);
+			        });
 			    });
 			} else {
 			    ftw.sendMessage(senderId, {text: "Wrong. Please try it again."});
