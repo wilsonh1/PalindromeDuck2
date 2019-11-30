@@ -214,7 +214,8 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 					    console.log(err);
 					    return;
 					}
-					if (!docs) return;
+					console.log("Docs founds was: " + docs);
+					if (!docs || !docs[0]) return;
 					const user_id = docs[0].senderId;
 					console.log("Have found: " + user_id);
 				    	countdownDoc.scores.set(user_id, countdownDoc.scores.get(user_id) + 1);
