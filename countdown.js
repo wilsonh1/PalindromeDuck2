@@ -141,7 +141,7 @@ function sendMessageToAllParticipants(doc, text) {
 	    Question.create({timestamp: time, gameId: doc._id, problemIndex: senderDoc.problemIndex, senderId: senderDoc.user_id},
 			    function (err, res) { if (err) console.log(err); });
 	}
-	if (senderDoc) ftw.sendMessage(senderDoc.user_id, {text: text}, false, createQuestion); 
+	if (senderDoc) ftw.sendMessage(senderDoc.user_id, {text: text}, true, createQuestion); 
     }
     getAllParticipants(doc, sendMessage);
 }
