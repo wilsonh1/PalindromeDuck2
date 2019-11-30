@@ -216,6 +216,7 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 				    console.log(err);
 				    return;
 				}
+				console.log("Here is the doc found for question: " + product);
 				console.log("Timestamp " + product.timestamp + " and answered timestamp " + timestamp); 
 			        Answer.create({timestamp: timestamp - product.timestamp, senderId: senderId, gameId: gameId, problemIndex: index}, function (err, res) {
 			            if (err) {
