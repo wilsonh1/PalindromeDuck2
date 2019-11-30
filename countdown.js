@@ -138,7 +138,7 @@ function sendMessageToAllParticipants(doc, text) {
     function sendMessage(senderDoc) { 
 	function createQuestion(time) {
 	    console.log("Time's value is: " + time);
-	    Question.create({timestamp: time, gameId: doc._id, problemIndex: senderDoc.problemIndex, senderId: senderDoc.user_id},
+	    Question.create({timestamp: time, gameId: doc._id, problemIndex: senderDoc.current_problem, senderId: senderDoc.user_id},
 			    function (err, res) { if (err) console.log(err); });
 	}
 	if (senderDoc) ftw.sendMessage(senderDoc.user_id, {text: text}, true, createQuestion); 
