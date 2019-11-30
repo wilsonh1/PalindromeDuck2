@@ -214,7 +214,8 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 			        if (err) {
 				    console.log(err);
 				    return;
-				} 
+				}
+				console.log("Timestamp " + product.timestamp + " and answered timestamp " + timestamp); 
 			        Answer.create({timestamp: timestamp - product.timestamp, senderId: senderId, gameId: gameId, problemIndex: index}, function (err, res) {
 			            if (err) {
 				        console.log(err);
