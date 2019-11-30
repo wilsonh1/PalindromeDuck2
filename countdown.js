@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 const ftw = require('./ftw');
 const User = require('./models/user'); 
 const Countdown  = require('./models/Countdown');
+const Answer = require('./models/answer');
 
 function startCountdown(senderId, size) {
     const id = new Date().getTime() // take advantage of the fact that time is monotonically increasing to generate id
@@ -190,7 +191,7 @@ function incrementAllParticipantProblemIndexes(doc) {
 }
 
 // index.js will check if sender is in game
-function answerQuestion(senderId, gameId, answer) {
+function answerQuestion(senderId, gameId, answer, timestamp) {
    User.findOne({game_id: gameId}, function (err, userDoc) {
        	if (err) console.log(err);
        	else {
@@ -200,10 +201,27 @@ function answerQuestion(senderId, gameId, answer) {
 			const index = userDoc.current_problem
 			if (index == countdownDoc.problemIndex && countdownDoc.problems.get(userDoc.current_problem.toString(10)).answer == answer) {
 		  	    sendMessageToAllParticipants(countdownDoc, "Someone has correctly answered the question.");
-			    countdownDoc.scores.set(senderId, countdownDoc.scores.get(senderId) + 1);
-			    countdownDoc.save(function (err, res) {
-				if (err) console.log(err); 
-				else endGameSequence(countdownDoc, userDoc.current_problem);
+			    Answer.create({timestamp: timestamp, senderId: senderId, gameId: gameId, problemIndex: index}, function (err, res) {
+			        if (err) {
+				    console.log(err);
+				    return;
+				}
+				setTimeout(function () {
+				    Answer.find({problemIndex: index, gameId: gameId}).sort({timestamp: 1}).limit(1).exec( function (err, docs) {
+					if (err) {
+					    console.log(err);
+					    return;
+					}
+					if (!docs) return;
+					const user_id = docs[0].sender_id;
+				    	countdownDoc.scores.set(user_id, countdownDoc.scores.get(user_id) + 1);
+			                countdownDoc.save(function (err, res) {
+				            if (err) console.log(err); 
+				            else endGameSequence(countdownDoc, userDoc.current_problem);
+			                }); 
+					Answer.deleteMany({problemIndex: index, gameId: gameId}, function (err) {if (err) console.log(err); });
+				    });
+				}, 1000);
 			    });
 			} else {
 			    ftw.sendMessage(senderId, {text: "Wrong. Please try it again."});
