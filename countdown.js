@@ -217,7 +217,7 @@ function answerQuestion(senderId, gameId, answer, timestamp) {
 				         console.log(err);
 				    	return;
 				    }
-				    if (!product || product.timestamp == 0) {
+				    if (!product || (!product.timestamp)) {
 					console.log("In here: " + product);
 					setTimeout(getQuestion, 200);
 					return;
