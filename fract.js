@@ -139,7 +139,14 @@ function checkPalindrome (s) {
 function updatePal (senderId, sent, date, messageId) {
     var val = sent % 60000;
 
-    Palindrome.create({timestamp: date, unix: sent, user_id: senderId, mid: messageId, points: val}, function(errC, docsC) {
+    var create = {
+        timestampe: date,
+        unix: sent,
+        user_id: senderId,
+        mid: messageId,
+        points: val
+    };
+    Palindrome.create(create, function(errC, docsC) {
         if (errC) {
             var palQ = Palindrome.findOne({timestamp: date}).select({unix: 1, user_id: 1, mid: 1, points: 1, _id: 0}).lean();
             palQ.exec(function(err, palObj) {
