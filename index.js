@@ -11,8 +11,6 @@ var db = mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUn
 var Leaderboard = require('./models/leaderboard');
 var Palindrome = require('./models/palindrome');
 
-const ftw = require('./ftw');
-
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
 app.post('/webhook', (req, res) => {
@@ -94,14 +92,6 @@ function processMessage (event) {
                 getLeader(senderId, "ahead of");
             else if (str == "behind")
                 getLeader(senderId, "behind");
-            else if (str == "ftw")
-                ftw.getProblem(senderId);
-            else if (str.split(' ')[0] == "!")
-                ftw.getAnswer(senderId, str.split(' ')[1], sent);
-            else if (str == "stats")
-                ftw.getStats(senderId);
-            else if (str == "reset")
-                ftw.resetStats(senderId);
             else
                 notRecognized(senderId);
         }
@@ -252,7 +242,7 @@ function getLeader (senderId, flag) {
                 sendMessage(senderId, {text: "not found on leaderboard"});
             else {
                 if (!flag) {
-                    var x = Leaderboard.countDocuments({points : {"$gt" : lObj['points']}});
+                    var x = Leaderboard.countDocuments({points : {$gt : lObj['points']}});
                     x.exec(function(err2, res) {
                         if (err2)
                             console.log(err2);
@@ -278,7 +268,7 @@ function getDiff (senderId, points, flag) {
             console.log(err);
         else {
             var p = (!lObj[0]) ? points : lObj[0]['points'];
-            var x = Leaderboard.countDocuments({points : {"$gt" : p}});
+            var x = Leaderboard.countDocuments({points : {$gt : p}});
             x.exec(function(err2, res) {
                 if (err2)
                     console.log(err2);

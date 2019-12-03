@@ -182,19 +182,15 @@ function updateLeader (senderId, val) {
     if (val >= 0)
         sendMessage(senderId, {text: "duck " + val / 1000});
 
-    Leaderboard.create({user_id: senderId, name: "", points: val}, function(err, docs) {
-        if (err) {
-            Leaderboard.updateOne({user_id: senderId}, { $inc: { points: val } }, function(errU, docsU) {
-                if (errU)
-                    console.log("Error incrementing: " + errU);
-                else
-                    console.log("Incremented: " + senderId + " " + val);
-            });
-        }
-        else {
+    Leaderboard.updateOne({user_id: senderId}, {$inc: {points: val}}, {upsert: true}, function(errU, docsU) {
+        if (errU)
+            console.log("Error incrementing: " + errU);
+        else if (docsU.upserted) {
             console.log("Created leaderboard: " + senderId);
             setName(senderId);
         }
+        else
+            console.log("Incremented: " + senderId + " " + val);
     });
 }
 
