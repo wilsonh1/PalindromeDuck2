@@ -140,7 +140,7 @@ function updatePal (senderId, sent, date, messageId) {
     var val = sent % 60000;
 
     var create = {
-        timestampe: date,
+        timestamp: date,
         unix: sent,
         user_id: senderId,
         mid: messageId,

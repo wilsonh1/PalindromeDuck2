@@ -148,7 +148,7 @@ function updatePal (senderId, sent, date, messageId) {
         val++;
 
     var create = {
-        timestampe: date,
+        timestamp: date,
         unix: sent,
         user_id: senderId,
         mid: messageId,
