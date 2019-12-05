@@ -54,6 +54,7 @@ app.get('/webhook', (req, res) => {
 
 function processMessage (event) {
     if (!event.message.is_echo) {
+        console.log(JSON.stringify(event));
         var senderId = event.sender.id;
         var message = event.message;
         var sent = event.timestamp;
