@@ -18,7 +18,6 @@ app.post('/webhook', (req, res) => {
 
     if (body.object === 'page') {
         res.status(200).send('EVENT_RECEIVED');
-        console.log(JSON.stringify(body));
         body.entry.forEach(function(entry) {
             entry.messaging.forEach(function(event) {
                 if (event.message)
