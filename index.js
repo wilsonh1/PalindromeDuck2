@@ -18,6 +18,7 @@ app.post('/webhook', (req, res) => {
 
     if (body.object === 'page') {
         res.status(200).send('EVENT_RECEIVED');
+        console.log(JSON.stringify(body));
         body.entry.forEach(function(entry) {
             entry.messaging.forEach(function(event) {
                 if (event.message)
@@ -54,7 +55,6 @@ app.get('/webhook', (req, res) => {
 
 function processMessage (event) {
     if (!event.message.is_echo) {
-        console.log(JSON.stringify(event));
         var senderId = event.sender.id;
         var message = event.message;
         var sent = event.timestamp;
